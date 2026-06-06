@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>فروشهایپ — مدیریت صفحه فیسبوک</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">ف</div>
+      <span>فروشهایپ</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <span class="nav-icon">📊</span> داشبورد
+      </a>
+      <a href="#" class="nav-item" data-page="new-post">
+        <span class="nav-icon">✏️</span> پست جدید
+      </a>
+      <a href="#" class="nav-item" data-page="scheduled">
+        <span class="nav-icon">🕐</span> پست‌های زمان‌بندی
+      </a>
+      <a href="#" class="nav-item" data-page="posts">
+        <span class="nav-icon">📋</span> همه پست‌ها
+      </a>
+      <a href="#" class="nav-item" data-page="comments">
+        <span class="nav-icon">💬</span> کامنت‌ها
+      </a>
+      <a href="#" class="nav-item" data-page="analytics">
+        <span class="nav-icon">📈</span> آمار و آنالیز
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="page-badge">
+        <span class="badge-dot"></span>
+        <span>صفحه متصل است</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <h1 class="topbar-title" id="pageTitle">داشبورد</h1>
+    <div class="topbar-actions">
+      <button class="btn btn-primary" id="quickPost">+ پست سریع</button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main" id="mainContent">
+
+    <!-- ─── Dashboard Page ─────────────────────────────── -->
+    <section class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <span class="stat-number" id="stat-fans">—</span>
+            <span class="stat-label">دنبال‌کننده</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👁️</div>
+          <div class="stat-info">
+            <span class="stat-number" id="stat-views">—</span>
+            <span class="stat-label">بازدید هفته</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">❤️</div>
+          <div class="stat-info">
+            <span class="stat-number" id="stat-engage">—</span>
+            <span class="stat-label">تعامل هفته</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📝</div>
+          <div class="stat-info">
+            <span class="stat-number" id="stat-posts">—</span>
+            <span class="stat-label">پست این ماه</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2>آخرین پست‌ها</h2>
+        <a href="#" class="link" data-page="posts">همه پست‌ها ←</a>
+      </div>
+      <div class="posts-list" id="dashboard-posts">
+        <div class="loading">در حال بارگذاری...</div>
+      </div>
+    </section>
+
+    <!-- ─── New Post Page ───────────────────────────────── -->
+    <section class="page" id="page-new-post">
+      <div class="card">
+        <h2 class="card-title">✏️ ایجاد پست جدید</h2>
+        <form id="postForm">
+          <div class="form-group">
+            <label>متن پست *</label>
+            <textarea id="postMessage" placeholder="محتوای پست خود را بنویسید..." rows="6"></textarea>
+            <div class="char-count"><span id="charCount">0</span> / 63,206</div>
+          </div>
+          <div class="form-group">
+            <label>لینک (اختیاری)</label>
+            <input type="url" id="postLink" placeholder="https://..." />
+          </div>
+
+          <div class="form-group">
+            <label>نوع انتشار</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="publishType" value="now" checked />
+                <span>انتشار همین الان</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="publishType" value="schedule" />
+                <span>زمان‌بندی خودکار</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group hidden" id="scheduleOptions">
+            <label>زمان انتشار</label>
+            <input type="datetime-local" id="scheduleTime" />
+            <p class="hint">⏰ پست به صورت خودکار در زمان مشخص شده منتشر می‌شود</p>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="previewBtn">👁 پیش‌نمایش</button>
+            <button type="submit" class="btn btn-primary" id="submitPost">🚀 انتشار</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Preview -->
+      <div class="card hidden" id="previewCard">
+        <h2 class="card-title">👁 پیش‌نمایش پست</h2>
+        <div class="fb-preview">
+          <div class="fb-preview-header">
+            <div class="fb-avatar">ف</div>
+            <div>
+              <strong>فروشهایپ</strong>
+              <span class="fb-time">همین الان · 🌍</span>
+            </div>
+          </div>
+          <p class="fb-preview-text" id="previewText"></p>
+          <div class="fb-preview-link hidden" id="previewLink"></div>
+          <div class="fb-preview-actions">
+            <span>👍 لایک</span>
+            <span>💬 کامنت</span>
+            <span>↗ اشتراک‌گذاری</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Scheduled Posts ─────────────────────────────── -->
+    <section class="page" id="page-scheduled">
+      <div class="card">
+        <h2 class="card-title">🕐 پست‌های زمان‌بندی شده</h2>
+        <div id="scheduledList">
+          <div class="loading">در حال بارگذاری...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── All Posts ───────────────────────────────────── -->
+    <section class="page" id="page-posts">
+      <div class="section-header">
+        <h2>📋 همه پست‌ها</h2>
+        <button class="btn btn-sm btn-secondary" id="refreshPosts">🔄 بروزرسانی</button>
+      </div>
+      <div class="posts-list" id="allPostsList">
+        <div class="loading">در حال بارگذاری...</div>
+      </div>
+    </section>
+
+    <!-- ─── Comments ────────────────────────────────────── -->
+    <section class="page" id="page-comments">
+      <div class="card">
+        <h2 class="card-title">💬 مدیریت کامنت‌ها</h2>
+        <div class="form-group">
+          <label>آی‌دی پست</label>
+          <div class="input-row">
+            <input type="text" id="commentPostId" placeholder="مثال: 123456789_987654321" />
+            <button class="btn btn-primary" id="loadComments">بارگذاری</button>
+          </div>
+        </div>
+        <div id="commentsList"></div>
+      </div>
+    </section>
+
+    <!-- ─── Analytics ───────────────────────────────────── -->
+    <section class="page" id="page-analytics">
+      <div class="section-header">
+        <h2>📈 آمار و آنالیز</h2>
+        <select id="analyticsPeriod" class="select-input">
+          <option value="day">روزانه</option>
+          <option value="week" selected>هفتگی</option>
+          <option value="month">ماهانه</option>
+        </select>
+      </div>
+      <div id="analyticsData">
+        <div class="loading">در حال بارگذاری...</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- Overlay for mobile sidebar -->
+  <div class="overlay hidden" id="overlay"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

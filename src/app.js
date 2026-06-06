@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const path    = require('path');
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -29,6 +30,9 @@ const limiter = rateLimit({
 });
 app.use('/api', limiter);
 
+// ─── Static Frontend ──────────────────────────────────────────────────────
+app.use(express.static(path.join(__dirname, '..', 'public')));
+
 // ─── Health Check ──────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -39,6 +43,13 @@ app.use('/api/posts', postsRouter);
 app.use('/api/comments', commentsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/scheduler', schedulerRouter);
+
+// ─── Fallback to index.html for SPA ───────────────────────────────────────
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+  }
+});
 
 // ─── Error Handling ────────────────────────────────────────────────────────
 app.use(notFound);
