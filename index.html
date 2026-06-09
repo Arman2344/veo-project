@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok – Marcin AI</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #1a1a1a;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .phone {
+      width: 390px;
+      background: #000;
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow: 0 0 0 10px #111, 0 0 60px rgba(0,0,0,0.8);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      color: #fff;
+      position: relative;
+    }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      height: 44px;
+      background: #000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 24px 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-time { font-size: 15px; font-weight: 600; }
+
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+
+    /* ── TOP NAV ── */
+    .top-nav {
+      height: 46px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .live-badge {
+      border: 1.5px solid rgba(255,255,255,0.85);
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      border-radius: 3px;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .claude-account {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .claude-logo {
+      width: 28px;
+      height: 28px;
+      background: radial-gradient(circle at 50% 45%, #f97316, #c2410c);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 18px;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-tab {
+      font-size: 15px;
+      color: rgba(255,255,255,0.52);
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .nav-tab.active {
+      color: #fff;
+      font-weight: 700;
+      position: relative;
+    }
+
+    .nav-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 2px;
+      background: #fff;
+      border-radius: 1px;
+    }
+
+    .search-icon { cursor: pointer; flex-shrink: 0; }
+
+    /* ── SUB TABS ── */
+    .sub-tabs {
+      height: 36px;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: flex-end;
+      padding: 0 18px 0;
+      gap: 26px;
+    }
+
+    .sub-tab {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.48);
+      cursor: pointer;
+      padding-bottom: 8px;
+      white-space: nowrap;
+    }
+
+    .sub-tab.active {
+      color: #fff;
+      font-weight: 600;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #1ec8e1;
+    }
+
+    /* ── VIDEO WRAPPER ── */
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      height: 572px;
+      overflow: hidden;
+    }
+
+    /* Blue circuit video background */
+    .video-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 60%, #1565c0 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 30%, #0d47a1 0%, transparent 55%),
+        linear-gradient(160deg, #071d40 0%, #0a2a5e 35%, #0d3a7a 65%, #0a2855 100%);
+    }
+
+    /* Circuit SVG */
+    .circuit-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Hand SVG */
+    .hand-svg {
+      position: absolute;
+      bottom: -10px;
+      right: 50px;
+      width: 200px;
+      height: 280px;
+      transform: rotate(-15deg);
+    }
+
+    /* Play triangle */
+    .play-triangle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 18px 0 18px 32px;
+      border-color: transparent transparent transparent rgba(255,255,255,0.3);
+      margin-top: -40px;
+      margin-left: -10px;
+    }
+
+    /* Text overlay top */
+    .video-text-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 10px 14px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.35), transparent);
+    }
+
+    .video-text-line {
+      color: rgba(255,255,255,0.65);
+      font-size: 13.5px;
+      line-height: 1.55;
+      text-align: right;
+    }
+
+    /* Red banner */
+    .red-banner {
+      position: absolute;
+      top: 68px;
+      left: -12px;
+      background: #c0160e;
+      color: #fff;
+      padding: 12px 30px 12px 26px;
+      transform: rotate(-3deg);
+      z-index: 5;
+      min-width: 310px;
+      box-shadow: 2px 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .red-banner .line1 {
+      font-size: 22px;
+      font-weight: 800;
+      display: block;
+      letter-spacing: 0.2px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+
+    .red-banner .line2 {
+      font-size: 19px;
+      font-weight: 700;
+      display: block;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    }
+
+    /* Timer bottom-left of video */
+    .video-timer {
+      position: absolute;
+      bottom: 54px;
+      left: 12px;
+      background: rgba(0,0,0,0.55);
+      color: rgba(255,255,255,0.85);
+      font-size: 11.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    /* Engagement bottom of video */
+    .video-stats {
+      position: absolute;
+      bottom: 34px;
+      left: 12px;
+      display: flex;
+      gap: 18px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .stat-item { display: flex; align-items: center; gap: 4px; }
+
+    /* Bottom engagement bar */
+    .engagement-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 28px;
+      background: rgba(0,0,0,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .eng-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Right action buttons */
+    .action-col {
+      position: absolute;
+      right: 10px;
+      bottom: 35px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .avatar-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid #fff;
+      margin-bottom: 12px;
+      background: #777;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+    }
+
+    .action-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .action-icon-wrap {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(30,30,30,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-label {
+      font-size: 11.5px;
+      color: rgba(255,255,255,0.9);
+      margin-top: 3px;
+      font-weight: 500;
+    }
+
+    /* ── INFO AREA ── */
+    .info-area {
+      background: #000;
+      padding: 10px 14px 6px;
+    }
+
+    .username {
+      font-size: 15.5px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .caption {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.45;
+      margin-bottom: 4px;
+    }
+
+    .more-text {
+      color: rgba(255,255,255,0.45);
+    }
+
+    .original-link {
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.45);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 2px;
+    }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      background: #000;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 8px 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .bnav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      min-width: 52px;
+    }
+
+    .bnav-label {
+      font-size: 9.5px;
+      color: rgba(255,255,255,0.85);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .bnav-item.active .bnav-label { font-weight: 700; }
+
+    .plus-btn {
+      position: relative;
+    }
+
+    .plus-box {
+      width: 46px;
+      height: 30px;
+      border-radius: 9px;
+      background: linear-gradient(to right, #61d8e0, #f04a72);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 300;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .inbox-wrap { position: relative; }
+
+    .notif-badge {
+      position: absolute;
+      top: -5px;
+      right: -7px;
+      background: #ee1d52;
+      color: #fff;
+      font-size: 8px;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 8px;
+      line-height: 1.4;
+    }
+
+    /* small dot indicator on top left of image */
+    .dot-indicator {
+      position: absolute;
+      bottom: 24px;
+      left: 12px;
+      display: flex;
+      gap: 4px;
+      z-index: 3;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+    }
+
+    .dot.active { background: #fff; }
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <!-- signal -->
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="white">
+        <rect x="0" y="7" width="3" height="5" rx="0.5"/>
+        <rect x="4.5" y="4.5" width="3" height="7.5" rx="0.5"/>
+        <rect x="9" y="2" width="3" height="10" rx="0.5"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.5"/>
+      </svg>
+      <!-- wifi -->
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
+        <path d="M8 9.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
+        <path d="M3.5 6.5C5 5 6.4 4 8 4s3 1 4.5 2.5" stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <path d="M1 3.5C3.2 1.3 5.5 0 8 0s4.8 1.3 7 3.5" stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      </svg>
+      <!-- battery -->
+      <svg width="25" height="12" viewBox="0 0 25 12">
+        <rect x="0" y="1" width="21" height="10" rx="2.5" stroke="white" stroke-width="1.3" fill="none"/>
+        <rect x="22" y="3.5" width="2.5" height="5" rx="1" fill="rgba(255,255,255,0.5)"/>
+        <rect x="1.5" y="2.5" width="15" height="7" rx="1.5" fill="white"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <div class="live-badge">LIVE</div>
+
+    <div class="claude-account">
+      <!-- Orange sunburst logo -->
+      <div class="claude-logo">
+        <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+          <path d="M16 2 L18 12 L28 8 L21 16 L30 20 L20 20 L22 30 L16 23 L10 30 L12 20 L2 20 L11 16 L4 8 L14 12 Z"
+            fill="rgba(255,255,255,0.9)" stroke="rgba(255,200,150,0.4)" stroke-width="0.5"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="nav-tabs">
+      <span class="nav-tab">Community</span>
+      <span class="nav-tab">Gefolgt</span>
+      <span class="nav-tab active">Für dich</span>
+    </div>
+
+    <div class="search-icon">
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7.5"/>
+        <line x1="17" y1="17" x2="22" y2="22"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- SUB TABS -->
+  <div class="sub-tabs">
+    <span class="sub-tab active">Top</span>
+    <span class="sub-tab">Latest</span>
+    <span class="sub-tab">People</span>
+    <span class="sub-tab">Media</span>
+  </div>
+
+  <!-- VIDEO -->
+  <div class="video-wrapper">
+    <div class="video-bg"></div>
+
+    <!-- Circuit board SVG pattern -->
+    <svg class="circuit-svg" viewBox="0 0 390 572" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g stroke="#2a8bcc" stroke-width="1.2" fill="none" opacity="0.55" filter="url(#glow)">
+        <!-- Horizontal lines -->
+        <polyline points="0,120 80,120 80,80 180,80 180,140 280,140"/>
+        <polyline points="310,140 390,140"/>
+        <polyline points="0,200 60,200 60,240 160,240 160,200 240,200 240,260 340,260 340,200 390,200"/>
+        <polyline points="0,320 100,320 100,280 200,280 200,340 300,340 300,300 390,300"/>
+        <polyline points="50,420 50,460 130,460 130,400 220,400 220,450 320,450 320,410 390,410"/>
+        <polyline points="0,500 90,500 90,540 200,540"/>
+        <!-- Vertical connectors -->
+        <polyline points="80,120 80,200"/>
+        <polyline points="160,80 160,140"/>
+        <polyline points="240,200 240,140 300,140 300,260"/>
+        <polyline points="130,320 130,460"/>
+        <polyline points="220,280 220,400"/>
+        <polyline points="340,260 340,410"/>
+      </g>
+      <!-- Junction nodes -->
+      <g fill="#3ab0e8" opacity="0.75" filter="url(#glow)">
+        <circle cx="80" cy="120" r="4.5"/><circle cx="180" cy="80" r="3.5"/>
+        <circle cx="180" cy="140" r="4.5"/><circle cx="60" cy="200" r="3.5"/>
+        <circle cx="160" cy="240" r="4.5"/><circle cx="240" cy="200" r="4.5"/>
+        <circle cx="240" cy="260" r="3.5"/><circle cx="340" cy="260" r="4.5"/>
+        <circle cx="100" cy="320" r="4.5"/><circle cx="200" cy="280" r="3.5"/>
+        <circle cx="300" cy="340" r="4.5"/><circle cx="130" cy="460" r="4"/>
+        <circle cx="220" cy="400" r="4.5"/><circle cx="320" cy="450" r="3.5"/>
+        <circle cx="90" cy="500" r="3.5"/>
+      </g>
+      <!-- Small component boxes -->
+      <g stroke="#3ab0e8" stroke-width="1" fill="rgba(30,100,180,0.2)" opacity="0.7">
+        <rect x="150" cy="195" x="150" y="195" width="20" height="10" rx="2"/>
+        <rect x="240" y="130" width="22" height="12" rx="2"/>
+        <rect x="295" y="290" width="18" height="10" rx="2"/>
+        <rect x="195" y="270" width="20" height="12" rx="2"/>
+        <rect x="320" y="400" width="16" height="10" rx="2"/>
+      </g>
+      <!-- Light glow dots scattered -->
+      <g fill="#5cc8f5" opacity="0.4">
+        <circle cx="140" cy="360" r="2.5"/>
+        <circle cx="280" cy="180" r="2.5"/>
+        <circle cx="360" cy="350" r="2.5"/>
+        <circle cx="50" cy="450" r="2"/>
+        <circle cx="310" cy="480" r="2.5"/>
+      </g>
+    </svg>
+
+    <!-- Play button faint -->
+    <div class="play-triangle"></div>
+
+    <!-- Text overlay from source video -->
+    <div class="video-text-overlay">
+      <div class="video-text-line">...model that we've ma...</div>
+      <div class="video-text-line">xceed those of any model we've ever made genera...</div>
+    </div>
+
+    <!-- Red diagonal banner -->
+    <div class="red-banner">
+      <span class="line1">🤖 Claude Fable 5 LIVE!</span>
+      <span class="line2">Jarvis Kommandozentrale</span>
+    </div>
+
+    <!-- Pointing hand SVG -->
+    <svg class="hand-svg" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="skinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#d4956a"/>
+          <stop offset="60%" stop-color="#c07850"/>
+          <stop offset="100%" stop-color="#a05c38"/>
+        </linearGradient>
+        <linearGradient id="skinGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#c8845a"/>
+          <stop offset="100%" stop-color="#9a5030"/>
+        </linearGradient>
+      </defs>
+      <!-- Palm/hand base -->
+      <path d="M30 280 L30 160 Q28 130 45 120 Q62 110 75 125 L75 80 Q74 65 88 62 Q102 59 104 75 L104 100 Q106 88 118 87 Q130 86 132 99 L132 115 Q135 104 146 105 Q157 106 157 118 L157 170 L165 160 Q175 148 185 152 Q195 156 190 168 L170 220 Q158 250 140 265 L110 278 Z"
+        fill="url(#skinGrad)" stroke="#9a5030" stroke-width="1.5"/>
+      <!-- Index finger pointing -->
+      <path d="M74 125 L72 35 Q72 18 86 16 Q100 14 102 30 L104 75"
+        fill="url(#skinGrad)" stroke="#9a5030" stroke-width="1.2"/>
+      <!-- Finger highlight -->
+      <path d="M78 125 L76 38 Q76 26 86 24 Q96 26 98 38 L99 75"
+        fill="rgba(220,150,100,0.35)" stroke="none"/>
+      <!-- Knuckle lines on pointing finger -->
+      <path d="M76 95 Q87 91 99 95" stroke="#9a5030" stroke-width="1" fill="none" opacity="0.6"/>
+      <path d="M75 110 Q87 106 100 110" stroke="#9a5030" stroke-width="1" fill="none" opacity="0.5"/>
+      <!-- Palm crease -->
+      <path d="M50 165 Q80 155 115 165" stroke="#9a5030" stroke-width="1.2" fill="none" opacity="0.5"/>
+      <path d="M45 185 Q85 172 130 182" stroke="#9a5030" stroke-width="1" fill="none" opacity="0.4"/>
+      <!-- Other fingers folded -->
+      <path d="M104 100 L108 95 Q115 82 126 85 L132 99" fill="url(#skinGrad2)" stroke="#9a5030" stroke-width="1"/>
+      <path d="M132 115 L135 110 Q142 100 150 103 L157 118" fill="url(#skinGrad2)" stroke="#9a5030" stroke-width="1"/>
+      <!-- Thumb hint -->
+      <path d="M30 155 Q18 140 20 125 Q22 112 32 112 L44 120"
+        fill="url(#skinGrad)" stroke="#9a5030" stroke-width="1.2"/>
+    </svg>
+
+    <!-- Timer badge -->
+    <div class="video-timer">0:09</div>
+
+    <!-- Stats bottom of video -->
+    <div class="video-stats">
+      <div class="stat-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(255,255,255,0.65)">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3" fill="none" stroke="rgba(255,255,255,0.65)" stroke-width="2"/>
+        </svg>
+        <span>3.4K</span>
+      </div>
+      <div class="stat-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="rgba(255,100,100,0.7)">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        <span>4K</span>
+      </div>
+    </div>
+
+    <!-- Bottom engagement bar -->
+    <div class="engagement-bar">
+      <div class="eng-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        <span>4K</span>
+      </div>
+      <div class="eng-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span>Kommentieren</span>
+      </div>
+      <div class="eng-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2">
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+          <polyline points="16 6 12 2 8 6"/>
+          <line x1="12" y1="2" x2="12" y2="15"/>
+        </svg>
+        <span>Teilen</span>
+      </div>
+    </div>
+
+    <!-- Right side action column -->
+    <div class="action-col">
+      <!-- Avatar -->
+      <div class="avatar-wrap">
+        <svg viewBox="0 0 48 48" class="avatar-img">
+          <rect width="48" height="48" fill="#8a7260"/>
+          <!-- Face shape -->
+          <ellipse cx="24" cy="20" rx="13" ry="14" fill="#f5cba7"/>
+          <!-- Hair -->
+          <path d="M11 18 Q11 6 24 6 Q37 6 37 18 Q37 10 30 9 Q24 7 18 9 Q12 10 11 18Z" fill="#5a3520"/>
+          <!-- Eyes -->
+          <circle cx="19" cy="19" r="2" fill="#2c1810"/>
+          <circle cx="29" cy="19" r="2" fill="#2c1810"/>
+          <!-- Smile -->
+          <path d="M19 25 Q24 30 29 25" stroke="#c07040" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- Shirt -->
+          <path d="M8 48 L8 38 Q16 30 24 30 Q32 30 40 38 L40 48 Z" fill="#4a7fc1"/>
+        </svg>
+      </div>
+
+      <!-- Heart / Like -->
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#ee1d52" stroke="none">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <span class="action-label">10</span>
+      </div>
+
+      <!-- Comment -->
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <!-- dots inside bubble -->
+            <circle cx="8" cy="11" r="1" fill="#333"/>
+            <circle cx="12" cy="11" r="1" fill="#333"/>
+            <circle cx="16" cy="11" r="1" fill="#333"/>
+          </svg>
+        </div>
+        <span class="action-label">Sei 1.</span>
+      </div>
+
+      <!-- Bookmark -->
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="22" height="26" viewBox="0 0 24 28" fill="white">
+            <path d="M3 2h18a1 1 0 0 1 1 1v22l-10-6-10 6V3a1 1 0 0 1 1-1z"/>
+          </svg>
+        </div>
+        <span class="action-label">7</span>
+      </div>
+
+      <!-- Share -->
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </div>
+        <span class="action-label">Teilen</span>
+      </div>
+    </div>
+
+    <!-- Dots indicator bottom -->
+    <div class="dot-indicator">
+      <div class="dot active"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div><!-- end video-wrapper -->
+
+  <!-- INFO AREA -->
+  <div class="info-area">
+    <div class="username">Marcin AI</div>
+    <div class="caption">
+      🤖 Ich habe ein Jarvis-mäßiges
+      Kommandozentrum mit Claude F…<span class="more-text">mehr</span>
+    </div>
+    <div class="original-link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      Original anzeigen
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION -->
+  <div class="bottom-nav">
+    <!-- Home -->
+    <div class="bnav-item active">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+        <path d="M3 9.5L12 3l9 6.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>
+        <path d="M9 21V12h6v9" fill="#000"/>
+      </svg>
+      <span class="bnav-label">Home</span>
+    </div>
+
+    <!-- Freunde -->
+    <div class="bnav-item">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <span class="bnav-label">Freund*innen</span>
+    </div>
+
+    <!-- Plus -->
+    <div class="bnav-item">
+      <div class="plus-box">&#43;</div>
+    </div>
+
+    <!-- Inbox -->
+    <div class="bnav-item">
+      <div class="inbox-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        <span class="notif-badge">99+</span>
+      </div>
+      <span class="bnav-label">Posteingang</span>
+    </div>
+
+    <!-- Profile -->
+    <div class="bnav-item">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span class="bnav-label">Profil</span>
+    </div>
+  </div>
+
+</div><!-- end .phone -->
+</body>
+</html>
