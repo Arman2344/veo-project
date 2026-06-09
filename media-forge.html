@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok – Marcin AI – Media Forge</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .phone {
+      width: 390px;
+      background: #000;
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow: 0 0 0 10px #111, 0 0 60px rgba(0,0,0,0.9);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
+      color: #fff;
+      position: relative;
+    }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      height: 44px;
+      background: #000;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 24px 7px;
+    }
+    .status-time { font-size: 15px; font-weight: 600; }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+
+    /* ── TOP NAV ── */
+    .top-nav {
+      height: 46px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 10px;
+    }
+    .live-badge {
+      border: 1.5px solid rgba(255,255,255,0.85);
+      padding: 3px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+    .nav-tabs { display: flex; gap: 16px; flex: 1; justify-content: center; align-items: center; }
+    .nav-tab  { font-size: 15px; color: rgba(255,255,255,0.52); font-weight: 500; white-space: nowrap; }
+    .nav-tab.active { color: #fff; font-weight: 700; position: relative; }
+    .nav-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px; left: 50%;
+      transform: translateX(-50%);
+      width: 26px; height: 2px;
+      background: #fff; border-radius: 1px;
+    }
+
+    /* ── VIDEO WRAPPER ── */
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      height: 612px;
+      background: #0a0c0c;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Laptop frame background glow */
+    .laptop-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 40%, rgba(0,180,160,0.08) 0%, transparent 65%),
+        radial-gradient(ellipse at 50% 80%, rgba(0,0,0,0.5) 0%, transparent 60%),
+        #090d0d;
+    }
+
+    /* Terminal panel */
+    .terminal-panel {
+      position: relative;
+      z-index: 2;
+      width: 310px;
+      background: #060e0e;
+      border: 1.5px solid #00a896;
+      border-radius: 6px;
+      margin-top: -30px;
+      font-family: 'Courier New', 'Consolas', monospace;
+      box-shadow: 0 0 20px rgba(0,168,150,0.18), inset 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    .panel-header {
+      border-bottom: 1px solid #00a896;
+      padding: 7px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .panel-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #00c8b8;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    /* Tab buttons */
+    .tab-row {
+      display: flex;
+      gap: 6px;
+      padding: 8px 10px 6px;
+    }
+    .tab-btn {
+      font-family: 'Courier New', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      padding: 4px 8px;
+      border: 1.5px solid #005a54;
+      background: transparent;
+      color: #008880;
+      border-radius: 3px;
+      cursor: pointer;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      border-color: #00c8b8;
+      color: #00e0cc;
+      box-shadow: 0 0 6px rgba(0,200,184,0.3);
+    }
+
+    /* Section label */
+    .section-label {
+      font-family: 'Courier New', monospace;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      color: #00a896;
+      padding: 6px 10px 4px;
+      text-transform: uppercase;
+    }
+
+    /* UGC template buttons */
+    .template-row {
+      display: flex;
+      gap: 5px;
+      padding: 0 10px 8px;
+      flex-wrap: wrap;
+    }
+    .tmpl-btn {
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 4px 7px;
+      border: 1px solid #006860;
+      background: rgba(0,104,96,0.15);
+      color: #00c8b8;
+      border-radius: 2px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    /* Prompt area */
+    .prompt-area {
+      margin: 0 10px 8px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid #003e38;
+      border-radius: 3px;
+      padding: 7px 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 9px;
+      color: #6ec8c0;
+      line-height: 1.6;
+    }
+
+    /* Aspect ratio */
+    .ratio-row {
+      display: flex;
+      gap: 4px;
+      padding: 0 10px 6px;
+      flex-wrap: wrap;
+    }
+    .ratio-btn {
+      font-family: 'Courier New', monospace;
+      font-size: 8px;
+      padding: 3px 6px;
+      border: 1px solid #004a44;
+      background: transparent;
+      color: #007870;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .ratio-btn.active {
+      border-color: #00c8b8;
+      color: #00e8d8;
+      background: rgba(0,200,184,0.08);
+      box-shadow: 0 0 5px rgba(0,200,184,0.25);
+    }
+
+    /* Forge button */
+    .forge-btn-row {
+      padding: 6px 10px 10px;
+    }
+    .forge-btn {
+      width: 100%;
+      background: rgba(0,168,150,0.15);
+      border: 1.5px solid #00a896;
+      color: #00d4c4;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 7px 0;
+      border-radius: 3px;
+      text-align: center;
+      text-transform: uppercase;
+      box-shadow: 0 0 10px rgba(0,168,150,0.2);
+    }
+
+    /* Cyan scan-line effect */
+    .scanline {
+      position: absolute;
+      bottom: 4px;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, #00c8b8, transparent);
+      opacity: 0.6;
+      border-radius: 1px;
+    }
+
+    /* Right action column */
+    .action-col {
+      position: absolute;
+      right: 10px;
+      bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .avatar-wrap {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid #fff;
+      margin-bottom: 12px;
+      background: #777;
+    }
+    .action-item {
+      display: flex; flex-direction: column;
+      align-items: center; margin-bottom: 14px;
+    }
+    .action-icon-wrap {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      background: rgba(30,30,30,0.6);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .action-label { font-size: 11.5px; color: rgba(255,255,255,0.9); margin-top: 3px; font-weight: 500; }
+
+    /* ── INFO AREA ── */
+    .info-area { background: #000; padding: 10px 14px 6px; }
+    .username { font-size: 15.5px; font-weight: 700; margin-bottom: 4px; }
+    .caption { font-size: 13.5px; color: rgba(255,255,255,0.88); line-height: 1.45; margin-bottom: 4px; }
+    .more-text { color: rgba(255,255,255,0.4); }
+    .original-link { font-size: 12.5px; color: rgba(255,255,255,0.42); display: flex; align-items: center; gap: 4px; }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      background: #000;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 8px 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .bnav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; min-width: 52px; }
+    .bnav-label { font-size: 9.5px; color: rgba(255,255,255,0.85); text-align: center; white-space: nowrap; }
+    .bnav-item.active .bnav-label { font-weight: 700; }
+    .plus-box {
+      width: 46px; height: 30px;
+      border-radius: 9px;
+      background: linear-gradient(to right, #61d8e0, #f04a72);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: #fff; line-height: 1;
+    }
+    .inbox-wrap { position: relative; }
+    .notif-badge {
+      position: absolute; top: -5px; right: -7px;
+      background: #ee1d52; color: #fff;
+      font-size: 8px; font-weight: 700;
+      padding: 1px 4px; border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="white">
+        <rect x="0" y="7" width="3" height="5" rx="0.5"/>
+        <rect x="4.5" y="4.5" width="3" height="7.5" rx="0.5"/>
+        <rect x="9" y="2" width="3" height="10" rx="0.5"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.5"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
+        <path d="M8 9.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
+        <path d="M3.5 6.5C5 5 6.4 4 8 4s3 1 4.5 2.5" stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <path d="M1 3.5C3.2 1.3 5.5 0 8 0s4.8 1.3 7 3.5" stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12">
+        <rect x="0" y="1" width="21" height="10" rx="2.5" stroke="white" stroke-width="1.3" fill="none"/>
+        <rect x="22" y="3.5" width="2.5" height="5" rx="1" fill="rgba(255,255,255,0.5)"/>
+        <rect x="1.5" y="2.5" width="15" height="7" rx="1.5" fill="white"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <div class="live-badge">LIVE</div>
+    <div class="nav-tabs">
+      <span class="nav-tab">NT</span>
+      <span class="nav-tab">Community</span>
+      <span class="nav-tab">Gefolgt</span>
+      <span class="nav-tab active">Für dich</span>
+    </div>
+    <div>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7.5"/><line x1="17" y1="17" x2="22" y2="22"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- VIDEO: MEDIA FORGE INTERFACE -->
+  <div class="video-wrapper">
+    <div class="laptop-glow"></div>
+
+    <!-- Ambient corner glow dots -->
+    <div style="position:absolute;top:20px;left:20px;width:6px;height:6px;background:#00c8b8;border-radius:50%;box-shadow:0 0 8px #00c8b8;opacity:0.5;"></div>
+    <div style="position:absolute;top:20px;right:18px;width:5px;height:5px;background:#00c8b8;border-radius:50%;box-shadow:0 0 6px #00c8b8;opacity:0.4;"></div>
+
+    <!-- Terminal Panel -->
+    <div class="terminal-panel">
+
+      <!-- Header -->
+      <div class="panel-header">
+        <span class="panel-title">Media Forge · Massfield MCP</span>
+        <svg width="10" height="10" viewBox="0 0 10 10">
+          <circle cx="5" cy="5" r="4" fill="none" stroke="#00c8b8" stroke-width="1"/>
+          <line x1="5" y1="2" x2="5" y2="5" stroke="#00c8b8" stroke-width="1"/>
+          <line x1="5" y1="5" x2="7" y2="7" stroke="#00c8b8" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-row">
+        <div class="tab-btn active">01 · IMAGE</div>
+        <div class="tab-btn">02 · IMAGE → VIDEO</div>
+        <div class="tab-btn">QUEUE…</div>
+      </div>
+
+      <!-- UGC Templates -->
+      <div class="section-label">UGC TEMPLATES · TIKTOK SHOP</div>
+      <div class="template-row">
+        <div class="tmpl-btn">TESTIMONIAL SELFIE</div>
+        <div class="tmpl-btn">UNBOXING POV</div>
+        <div class="tmpl-btn">PRODUCT IN HAND</div>
+      </div>
+
+      <!-- Prompt -->
+      <div class="section-label">PROMPT · replace {PRODUCT} with yours:</div>
+      <div class="prompt-area">
+        UGC style selfie photo of a smiling young female creator, natural charm but slightly pretty than average creator aesthetic, no studio lighting
+      </div>
+
+      <!-- Aspect Ratio -->
+      <div class="section-label">ASPECT RATIO</div>
+      <div class="ratio-row">
+        <div class="ratio-btn active">9:16 · TikTok</div>
+        <div class="ratio-btn">1:1</div>
+        <div class="ratio-btn">16:9</div>
+        <div class="ratio-btn">4:3</div>
+        <div class="ratio-btn">9:4</div>
+        <div class="ratio-btn">9:3</div>
+        <div class="ratio-btn">2:8</div>
+      </div>
+
+      <!-- Forge button -->
+      <div class="forge-btn-row">
+        <div class="forge-btn">▶ FORGE IMAGE →</div>
+      </div>
+
+      <div class="scanline"></div>
+    </div>
+
+    <!-- Right action buttons -->
+    <div class="action-col">
+      <div class="avatar-wrap">
+        <svg viewBox="0 0 48 48" width="48" height="48">
+          <rect width="48" height="48" fill="#8a7260"/>
+          <ellipse cx="24" cy="20" rx="13" ry="14" fill="#f5cba7"/>
+          <path d="M11 18 Q11 6 24 6 Q37 6 37 18 Q37 10 30 9 Q24 7 18 9 Q12 10 11 18Z" fill="#5a3520"/>
+          <circle cx="19" cy="19" r="2" fill="#2c1810"/>
+          <circle cx="29" cy="19" r="2" fill="#2c1810"/>
+          <path d="M19 25 Q24 30 29 25" stroke="#c07040" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M8 48 L8 38 Q16 30 24 30 Q32 30 40 38 L40 48 Z" fill="#4a7fc1"/>
+        </svg>
+      </div>
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#ee1d52">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <span class="action-label">10</span>
+      </div>
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <span class="action-label">Sei 1.</span>
+      </div>
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="22" height="26" viewBox="0 0 24 28" fill="white">
+            <path d="M3 2h18a1 1 0 0 1 1 1v22l-10-6-10 6V3a1 1 0 0 1 1-1z"/>
+          </svg>
+        </div>
+        <span class="action-label">7</span>
+      </div>
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </div>
+        <span class="action-label">Teilen</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="info-area">
+    <div class="username">Marcin AI</div>
+    <div class="caption">🤖 Ich habe ein Jarvis-mäßiges Kommandozentrum mit Claude F…<span class="more-text">mehr</span></div>
+    <div class="original-link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Original anzeigen
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="bnav-item active">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21V12h6v9" fill="#000"/></svg>
+      <span class="bnav-label">Home</span>
+    </div>
+    <div class="bnav-item">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="bnav-label">Freund*innen</span>
+    </div>
+    <div class="bnav-item"><div class="plus-box">+</div></div>
+    <div class="bnav-item">
+      <div class="inbox-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span class="notif-badge">99+</span>
+      </div>
+      <span class="bnav-label">Posteingang</span>
+    </div>
+    <div class="bnav-item">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="bnav-label">Profil</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

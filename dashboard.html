@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TikTok – Marcin AI – Dashboard</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .phone {
+      width: 390px;
+      background: #000;
+      border-radius: 44px;
+      overflow: hidden;
+      box-shadow: 0 0 0 10px #111, 0 0 60px rgba(0,0,0,0.9);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
+      color: #fff;
+      position: relative;
+    }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      height: 44px; background: #000;
+      display: flex; align-items: flex-end;
+      justify-content: space-between; padding: 0 24px 7px;
+    }
+    .status-time { font-size: 15px; font-weight: 600; }
+    .status-icons { display: flex; align-items: center; gap: 6px; }
+
+    /* ── TOP NAV ── */
+    .top-nav {
+      height: 46px; background: #000;
+      display: flex; align-items: center; padding: 0 14px; gap: 10px;
+    }
+    .live-badge {
+      border: 1.5px solid rgba(255,255,255,0.85); padding: 3px 7px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.8px;
+      border-radius: 3px; white-space: nowrap;
+    }
+    .nav-tabs { display: flex; gap: 16px; flex: 1; justify-content: center; align-items: center; }
+    .nav-tab { font-size: 15px; color: rgba(255,255,255,0.52); font-weight: 500; white-space: nowrap; }
+    .nav-tab.active { color: #fff; font-weight: 700; position: relative; }
+    .nav-tab.active::after {
+      content: ''; position: absolute;
+      bottom: -8px; left: 50%; transform: translateX(-50%);
+      width: 26px; height: 2px; background: #fff; border-radius: 1px;
+    }
+
+    /* ── VIDEO WRAPPER (split screen) ── */
+    .video-wrapper {
+      position: relative; width: 100%; height: 612px;
+      background: #050808; overflow: hidden;
+      display: flex;
+    }
+
+    /* LEFT: Command Center */
+    .cmd-panel {
+      width: 220px; height: 100%;
+      background: #060c0c;
+      border-right: 1px solid #003030;
+      font-family: 'Courier New', 'Consolas', monospace;
+      font-size: 8.5px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* HOST/UPTIME bar */
+    .host-bar {
+      background: #0a1818; border-bottom: 1px solid #003a34;
+      padding: 4px 8px; display: flex; gap: 10px; align-items: center;
+      flex-shrink: 0;
+    }
+    .host-item { display: flex; flex-direction: column; gap: 1px; }
+    .host-key { color: #005a54; font-size: 7px; letter-spacing: 0.8px; text-transform: uppercase; }
+    .host-val { color: #00d4c4; font-size: 8px; font-weight: 700; }
+    .nominal-badge {
+      margin-left: auto; background: rgba(0,200,50,0.15);
+      border: 1px solid #00c830; color: #00d840;
+      font-size: 7px; font-weight: 700; padding: 2px 5px; border-radius: 2px;
+      letter-spacing: 0.8px;
+    }
+
+    /* Section header */
+    .sec-header {
+      padding: 5px 8px 3px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #002828;
+      flex-shrink: 0;
+    }
+    .sec-title { color: #00c8b8; font-size: 8.5px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+    .badge-active {
+      background: rgba(0,200,100,0.15); border: 1px solid #00b840;
+      color: #00d850; font-size: 7px; font-weight: 700;
+      padding: 1px 5px; border-radius: 2px;
+    }
+    .badge-live {
+      background: rgba(238,29,82,0.25); border: 1px solid #ee1d52;
+      color: #ff3060; font-size: 7px; font-weight: 700;
+      padding: 1px 5px; border-radius: 2px;
+    }
+
+    /* Stats row */
+    .stats-row {
+      padding: 4px 8px; display: flex; gap: 14px; align-items: center;
+      background: #071212; border-bottom: 1px solid #002828; flex-shrink: 0;
+    }
+    .stat-box { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+    .stat-num { color: #00e8d8; font-size: 12px; font-weight: 700; }
+    .stat-lbl { color: #005a54; font-size: 6.5px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-fail { color: #ff3333; }
+
+    /* Account list */
+    .acct-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+      border-bottom: 1px solid #002828; flex-shrink: 0;
+    }
+    .acct-col { padding: 3px 8px; }
+    .acct-item { color: #00a090; font-size: 7.5px; line-height: 1.7; }
+    .acct-item.highlight { color: #00c8b8; }
+
+    /* Red alert */
+    .alert-box {
+      margin: 4px 7px; padding: 4px 7px;
+      background: rgba(200,0,0,0.15); border: 1px solid #aa0000;
+      border-radius: 2px; color: #ff4444; font-size: 7.5px;
+      letter-spacing: 0.3px; flex-shrink: 0;
+    }
+
+    /* Feed */
+    .feed-body { overflow: hidden; flex: 1; }
+    .feed-row {
+      padding: 2.5px 8px; border-bottom: 1px solid #001a1a;
+      display: flex; align-items: flex-start; gap: 4px;
+    }
+    .feed-num {
+      width: 16px; color: #004040; font-size: 7px;
+      flex-shrink: 0; padding-top: 1px;
+    }
+    .feed-text { color: #007870; font-size: 7.5px; flex: 1; line-height: 1.4; }
+    .feed-time { color: #003a34; font-size: 7px; flex-shrink: 0; }
+
+    /* COMMS section */
+    .comms-row {
+      padding: 3px 8px; border-bottom: 1px solid #001a1a;
+      display: flex; align-items: flex-start; gap: 5px;
+    }
+    .comms-text { flex: 1; }
+    .comms-title { color: #00a090; font-size: 7.5px; }
+    .comms-sub { color: #005a52; font-size: 7px; }
+    .tag {
+      font-size: 6.5px; font-weight: 700; padding: 1px 4px;
+      border-radius: 2px; flex-shrink: 0; align-self: center;
+    }
+    .tag-live   { background: rgba(238,29,82,0.2); border: 1px solid #ee1d52; color: #ff3060; }
+    .tag-rev    { background: rgba(0,200,100,0.2); border: 1px solid #00c850; color: #00e060; }
+    .tag-pay    { background: rgba(255,200,0,0.15); border: 1px solid #d4a800; color: #ffc800; }
+    .tag-app    { background: rgba(100,100,255,0.2); border: 1px solid #6060ff; color: #8888ff; }
+
+    /* Marcin face cameo */
+    .cameo {
+      position: absolute; bottom: 24px; left: 8px;
+      width: 54px; height: 54px;
+      border: 1.5px solid #00a090; border-radius: 4px;
+      overflow: hidden; background: #1a2a2a;
+    }
+
+    /* bottom status bar */
+    .cmd-footer {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.8); border-top: 1px solid #002828;
+      padding: 3px 8px;
+      font-family: 'Courier New', monospace; font-size: 6.5px; color: #005a50;
+      letter-spacing: 0.4px;
+    }
+
+    /* RIGHT: YouTube-like panel */
+    .yt-panel {
+      flex: 1; height: 100%;
+      background: #f9f9f9;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    .yt-header {
+      background: #fff; padding: 6px 8px;
+      border-bottom: 1px solid #eee;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .yt-logo { color: #ff0000; font-weight: 900; font-size: 13px; letter-spacing: -0.5px; }
+    .yt-search-bar {
+      background: #f0f0f0; border: 1px solid #ddd;
+      border-radius: 12px; padding: 3px 8px;
+      font-size: 8px; color: #888; flex: 1; margin: 0 6px;
+    }
+
+    .yt-sidebar {
+      background: #fff; padding: 4px 6px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .sidebar-item {
+      font-size: 8px; color: #444; padding: 3px 4px;
+      border-radius: 4px; display: flex; align-items: center; gap: 5px;
+    }
+    .sidebar-item.active { background: #f8f0f0; color: #c00; font-weight: 700; }
+    .sidebar-dot { width: 6px; height: 6px; border-radius: 50%; background: #ddd; flex-shrink: 0; }
+    .sidebar-dot.red { background: #c00; }
+
+    /* Video card */
+    .yt-video-card { padding: 6px; }
+    .yt-thumb {
+      width: 100%; height: 75px;
+      background: linear-gradient(135deg, #0d47a1, #1565c0, #1976d2);
+      border-radius: 6px; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 6px;
+    }
+    .yt-play {
+      width: 28px; height: 28px; background: rgba(255,255,255,0.9);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    }
+    .yt-duration {
+      position: absolute; bottom: 4px; right: 5px;
+      background: rgba(0,0,0,0.75); color: #fff;
+      font-size: 7px; font-weight: 600; padding: 1px 4px; border-radius: 2px;
+    }
+
+    .yt-channel-row {
+      display: flex; align-items: center; gap: 5px; margin-bottom: 3px;
+    }
+    .yt-avatar {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: linear-gradient(135deg, #ee1d52, #c01040);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; font-weight: 700; color: white; flex-shrink: 0;
+    }
+    .yt-channel-name { font-size: 9px; font-weight: 700; color: #111; }
+    .yt-sub { font-size: 7.5px; color: #666; }
+
+    .yt-video-title { font-size: 8.5px; font-weight: 600; color: #111; line-height: 1.4; margin-bottom: 3px; }
+    .yt-meta { font-size: 7px; color: #888; }
+
+    /* Comment/tab row */
+    .yt-tabs {
+      display: flex; gap: 0;
+      border-top: 1px solid #eee; border-bottom: 1px solid #eee;
+      margin: 4px 0;
+    }
+    .yt-tab {
+      flex: 1; text-align: center; padding: 5px 0;
+      font-size: 8px; color: #888; font-weight: 600;
+    }
+    .yt-tab.active { color: #111; border-bottom: 2px solid #111; }
+
+    .yt-rec-item {
+      display: flex; gap: 5px; padding: 4px 6px;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .yt-rec-thumb {
+      width: 60px; height: 34px; border-radius: 3px;
+      background: linear-gradient(135deg, #1a237e, #283593);
+      flex-shrink: 0;
+    }
+    .yt-rec-info { flex: 1; }
+    .yt-rec-title { font-size: 7.5px; font-weight: 600; color: #111; line-height: 1.3; }
+    .yt-rec-ch { font-size: 7px; color: #888; }
+
+    /* Right action column */
+    .action-col {
+      position: absolute; right: 6px; bottom: 38px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .avatar-wrap {
+      width: 46px; height: 46px; border-radius: 50%;
+      overflow: hidden; border: 2px solid #fff; margin-bottom: 10px;
+    }
+    .action-item { display: flex; flex-direction: column; align-items: center; margin-bottom: 12px; }
+    .action-icon-wrap {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(20,20,20,0.65);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .action-label { font-size: 11px; color: rgba(255,255,255,0.9); margin-top: 2px; font-weight: 500; }
+
+    /* Bottom profile avatar */
+    .bottom-avatar {
+      position: absolute; right: 6px; bottom: 35px;
+      width: 42px; height: 42px; border-radius: 50%;
+      overflow: hidden; border: 1.5px solid rgba(255,255,255,0.6);
+      background: linear-gradient(135deg, #ff6b9d, #c850c0, #4158d0);
+    }
+
+    /* ── INFO AREA ── */
+    .info-area { background: #000; padding: 10px 14px 6px; }
+    .username { font-size: 15.5px; font-weight: 700; margin-bottom: 4px; }
+    .caption { font-size: 13.5px; color: rgba(255,255,255,0.88); line-height: 1.45; margin-bottom: 4px; }
+    .more-text { color: rgba(255,255,255,0.4); }
+    .original-link { font-size: 12.5px; color: rgba(255,255,255,0.42); display: flex; align-items: center; gap: 4px; }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      background: #000; display: flex; justify-content: space-around;
+      align-items: center; padding: 8px 8px 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .bnav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; min-width: 52px; }
+    .bnav-label { font-size: 9.5px; color: rgba(255,255,255,0.85); text-align: center; white-space: nowrap; }
+    .bnav-item.active .bnav-label { font-weight: 700; }
+    .plus-box {
+      width: 46px; height: 30px; border-radius: 9px;
+      background: linear-gradient(to right, #61d8e0, #f04a72);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: #fff;
+    }
+    .inbox-wrap { position: relative; }
+    .notif-badge {
+      position: absolute; top: -5px; right: -7px;
+      background: #ee1d52; color: #fff; font-size: 8px; font-weight: 700;
+      padding: 1px 4px; border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <svg width="17" height="12" viewBox="0 0 17 12" fill="white">
+        <rect x="0" y="7" width="3" height="5" rx="0.5"/>
+        <rect x="4.5" y="4.5" width="3" height="7.5" rx="0.5"/>
+        <rect x="9" y="2" width="3" height="10" rx="0.5"/>
+        <rect x="13.5" y="0" width="3" height="12" rx="0.5"/>
+      </svg>
+      <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
+        <path d="M8 9.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
+        <path d="M3.5 6.5C5 5 6.4 4 8 4s3 1 4.5 2.5" stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <path d="M1 3.5C3.2 1.3 5.5 0 8 0s4.8 1.3 7 3.5" stroke="white" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      </svg>
+      <svg width="25" height="12" viewBox="0 0 25 12">
+        <rect x="0" y="1" width="21" height="10" rx="2.5" stroke="white" stroke-width="1.3" fill="none"/>
+        <rect x="22" y="3.5" width="2.5" height="5" rx="1" fill="rgba(255,255,255,0.5)"/>
+        <rect x="1.5" y="2.5" width="15" height="7" rx="1.5" fill="white"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- TOP NAV -->
+  <div class="top-nav">
+    <div class="live-badge">LIVE</div>
+    <div class="nav-tabs">
+      <span class="nav-tab">NT</span>
+      <span class="nav-tab">Community</span>
+      <span class="nav-tab">Gefolgt</span>
+      <span class="nav-tab active">Für dich</span>
+    </div>
+    <div>
+      <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round">
+        <circle cx="11" cy="11" r="7.5"/><line x1="17" y1="17" x2="22" y2="22"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- VIDEO: SPLIT SCREEN -->
+  <div class="video-wrapper">
+
+    <!-- LEFT: Command Center -->
+    <div class="cmd-panel">
+
+      <!-- Host bar -->
+      <div class="host-bar">
+        <div class="host-item"><span class="host-key">HOST</span><span class="host-val">MacBook-Pro</span></div>
+        <div class="host-item"><span class="host-key">UPTIME</span><span class="host-val">5d 19h 36m</span></div>
+        <div class="host-item"><span class="host-key">ALL SYSTEMS</span></div>
+        <div class="nominal-badge">NOMINAL</div>
+      </div>
+
+      <!-- SOCIAL COMMAND header -->
+      <div class="sec-header">
+        <span class="sec-title">Social Command · Blotato</span>
+        <span class="badge-active">ACTIVE</span>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-box"><span class="stat-num">18</span><span class="stat-lbl">Accounts</span></div>
+        <div class="stat-box"><span class="stat-num">9</span><span class="stat-lbl">Platforms</span></div>
+        <div class="stat-box"><span class="stat-num">48</span><span class="stat-lbl">Posts</span></div>
+        <div class="stat-box"><span class="stat-num stat-fail">4</span><span class="stat-lbl" style="color:#662222;">Failures</span></div>
+      </div>
+
+      <!-- Accounts grid -->
+      <div class="acct-grid">
+        <div class="acct-col">
+          <div class="acct-item">@marcinandreo</div>
+          <div class="acct-item">@marcinandreo12</div>
+          <div class="acct-item">Izzevlin Travel</div>
+          <div class="acct-item">@marcinandreo1</div>
+          <div class="acct-item">@ulagontvibe</div>
+          <div class="acct-item">@izzevlin0990</div>
+          <div class="acct-item">alagentviho</div>
+          <div class="acct-item">Marcin Tomlev</div>
+        </div>
+        <div class="acct-col">
+          <div class="acct-item">@elegantovibe</div>
+          <div class="acct-item highlight">Marcin AI (21 Day Boot)</div>
+          <div class="acct-item">AI Agent Vibes</div>
+          <div class="acct-item">@marcinandre12</div>
+          <div class="acct-item">@elegantvibre</div>
+          <div class="acct-item">@marcintandre</div>
+          <div class="acct-item">Gregory Izzevlin, Al Bi</div>
+          <div class="acct-item">@marcinandre</div>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert-box">⚠ instagram token invalidated – reconnect</div>
+
+      <!-- DEPLOYMENT FEED -->
+      <div class="sec-header">
+        <span class="sec-title">Deployment Feed</span>
+      </div>
+      <div class="feed-body">
+        <div class="feed-row">
+          <span class="feed-num">IG</span>
+          <span class="feed-text">Geek AI free 3-day test – new video #…</span>
+          <span class="feed-time">21:36</span>
+        </div>
+        <div class="feed-row">
+          <span class="feed-num">TK</span>
+          <span class="feed-text">Geek AI free 3-day test</span>
+          <span class="feed-time">22:00</span>
+        </div>
+        <div class="feed-row">
+          <span class="feed-num">X</span>
+          <span class="feed-text">Geek AI free 3-day test</span>
+          <span class="feed-time">22:35</span>
+        </div>
+        <div class="feed-row">
+          <span class="feed-num">YT</span>
+          <span class="feed-text">Could this be the 1st cool AGI? Fable –</span>
+          <span class="feed-time">23:15</span>
+        </div>
+        <div class="feed-row">
+          <span class="feed-num">TK</span>
+          <span class="feed-text">Fable 5 boot Pokemon PikaBot solo – vl…</span>
+          <span class="feed-time">19:19</span>
+        </div>
+      </div>
+
+      <!-- COMMS RELAY -->
+      <div class="sec-header">
+        <span class="sec-title">Comms Relay · Gmail</span>
+        <span class="badge-active">ACTIVE</span>
+      </div>
+      <div class="comms-row">
+        <div class="comms-text">
+          <div class="comms-title">MassAfield AI · Field Collab – dedicated YT video</div>
+        </div>
+        <span class="tag tag-live">LIVE</span>
+      </div>
+      <div class="comms-row">
+        <div class="comms-text">
+          <div class="comms-title">Awesomeful</div>
+          <div class="comms-sub">You earned a commission! (+$)</div>
+        </div>
+        <span class="tag tag-rev">REVENUE</span>
+      </div>
+      <div class="comms-row">
+        <div class="comms-text">
+          <div class="comms-title">Basepoint.sh</div>
+          <div class="comms-sub">Affiliate payment – $1,569 reconciliation</div>
+        </div>
+        <span class="tag tag-pay">PAYMENT</span>
+      </div>
+      <div class="comms-row">
+        <div class="comms-text">
+          <div class="comms-title">TikTok Creator Portal</div>
+          <div class="comms-sub">Verified Program (Blue Tick)</div>
+        </div>
+        <span class="tag tag-app">APPLIED</span>
+      </div>
+
+      <!-- Marcin face cameo -->
+      <div class="cameo">
+        <svg viewBox="0 0 54 54" width="54" height="54">
+          <rect width="54" height="54" fill="#1a2a25"/>
+          <ellipse cx="27" cy="24" rx="13" ry="14" fill="#f0c090"/>
+          <path d="M14 22 Q14 10 27 10 Q40 10 40 22 Q40 13 33 11 Q27 9 21 11 Q14 13 14 22Z" fill="#604030"/>
+          <circle cx="22" cy="23" r="2" fill="#2c1810"/>
+          <circle cx="32" cy="23" r="2" fill="#2c1810"/>
+          <path d="M22 30 Q27 35 32 30" stroke="#c07040" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M10 54 L10 42 Q18 34 27 34 Q36 34 44 42 L44 54Z" fill="#3a6ab0"/>
+        </svg>
+      </div>
+
+      <!-- Footer -->
+      <div class="cmd-footer">
+        ■ DAN TOKEN EXPIRES – 2 POSTS FAILED · ▸ WRITES WEEKLY SYNC
+      </div>
+    </div>
+
+    <!-- RIGHT: YouTube panel -->
+    <div class="yt-panel">
+      <div class="yt-header">
+        <span class="yt-logo">▶ Pre...</span>
+        <div class="yt-search-bar">Ask Gemini</div>
+      </div>
+
+      <!-- Sidebar items -->
+      <div class="yt-sidebar">
+        <div class="sidebar-item active"><div class="sidebar-dot red"></div>/ Fable</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Dashboard</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Tasks</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Burn</div>
+        <div class="sidebar-item"><div class="sidebar-dot"></div>Calendar</div>
+      </div>
+
+      <!-- Video -->
+      <div class="yt-video-card">
+        <div class="yt-thumb">
+          <!-- Blueprint/diagram in thumbnail -->
+          <svg viewBox="0 0 100 75" width="100" height="75" style="position:absolute;inset:0;opacity:0.4">
+            <rect x="15" y="10" width="70" height="55" fill="none" stroke="#64b5f6" stroke-width="1"/>
+            <rect x="25" y="20" width="20" height="15" fill="none" stroke="#42a5f5" stroke-width="0.8"/>
+            <rect x="55" y="20" width="20" height="15" fill="none" stroke="#42a5f5" stroke-width="0.8"/>
+            <line x1="35" y1="35" x2="35" y2="50" stroke="#42a5f5" stroke-width="0.8"/>
+            <line x1="65" y1="35" x2="65" y2="50" stroke="#42a5f5" stroke-width="0.8"/>
+            <rect x="40" y="42" width="20" height="13" fill="none" stroke="#64b5f6" stroke-width="0.8"/>
+          </svg>
+          <div class="yt-play">
+            <svg width="10" height="12" viewBox="0 0 10 12"><path d="M0 0 L10 6 L0 12 Z" fill="#333"/></svg>
+          </div>
+          <span class="yt-duration">3:48</span>
+        </div>
+
+        <div class="yt-channel-row">
+          <div class="yt-avatar">A</div>
+          <div>
+            <div class="yt-channel-name">Alex Finn</div>
+            <div class="yt-sub">209K subscribers</div>
+          </div>
+        </div>
+
+        <div class="yt-video-title">Claude Fable 5 (Myth Buster)</div>
+        <div class="yt-meta">6,757 views · 2 hours ago</div>
+
+        <div class="yt-tabs">
+          <div class="yt-tab active">All</div>
+          <div class="yt-tab">From Alex Finn</div>
+        </div>
+
+        <!-- Recommended -->
+        <div class="yt-rec-item">
+          <div class="yt-rec-thumb" style="background:linear-gradient(135deg,#311b92,#4527a0)"></div>
+          <div class="yt-rec-info">
+            <div class="yt-rec-title">2nd YouTube channel announcement...</div>
+            <div class="yt-rec-ch">Alex Finn</div>
+          </div>
+        </div>
+        <div class="yt-rec-item">
+          <div class="yt-rec-thumb" style="background:linear-gradient(135deg,#1a237e,#0d47a1)"></div>
+          <div class="yt-rec-info">
+            <div class="yt-rec-title">MURR... MCCARTHY · LIVE</div>
+            <div class="yt-rec-ch">99+ unread</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right action buttons -->
+    <div class="action-col">
+      <div class="avatar-wrap">
+        <svg viewBox="0 0 48 48" width="48" height="48">
+          <rect width="48" height="48" fill="#8a7260"/>
+          <ellipse cx="24" cy="20" rx="13" ry="14" fill="#f5cba7"/>
+          <path d="M11 18 Q11 6 24 6 Q37 6 37 18 Q37 10 30 9 Q24 7 18 9 Q12 10 11 18Z" fill="#5a3520"/>
+          <circle cx="19" cy="19" r="2" fill="#2c1810"/>
+          <circle cx="29" cy="19" r="2" fill="#2c1810"/>
+          <path d="M19 25 Q24 30 29 25" stroke="#c07040" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M8 48 L8 38 Q16 30 24 30 Q32 30 40 38 L40 48 Z" fill="#4a7fc1"/>
+        </svg>
+      </div>
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#ee1d52">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <span class="action-label">10</span>
+      </div>
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <span class="action-label">Sei 1.</span>
+      </div>
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="20" height="24" viewBox="0 0 24 28" fill="white">
+            <path d="M3 2h18a1 1 0 0 1 1 1v22l-10-6-10 6V3a1 1 0 0 1 1-1z"/>
+          </svg>
+        </div>
+        <span class="action-label">7</span>
+      </div>
+      <div class="action-item">
+        <div class="action-icon-wrap">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </div>
+        <span class="action-label">Teilen</span>
+      </div>
+    </div>
+
+    <!-- Bottom-right second avatar (partially visible) -->
+    <div class="bottom-avatar"></div>
+
+  </div><!-- end video-wrapper -->
+
+  <!-- INFO -->
+  <div class="info-area">
+    <div class="username">Marcin AI</div>
+    <div class="caption">🤖 Ich habe ein Jarvis-mäßiges Kommandozentrum mit Claude F…<span class="more-text">mehr</span></div>
+    <div class="original-link">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      Original anzeigen
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="bnav-item active">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M3 9.5L12 3l9 6.5V21a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M9 21V12h6v9" fill="#000"/></svg>
+      <span class="bnav-label">Home</span>
+    </div>
+    <div class="bnav-item">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="bnav-label">Freund*innen</span>
+    </div>
+    <div class="bnav-item"><div class="plus-box">+</div></div>
+    <div class="bnav-item">
+      <div class="inbox-wrap">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span class="notif-badge">99+</span>
+      </div>
+      <span class="bnav-label">Posteingang</span>
+    </div>
+    <div class="bnav-item">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="bnav-label">Profil</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
