@@ -1,10 +1,10 @@
 // PLACEHOLDER — replace these with your real profile URLs.
 // These are intentionally centralized here so you only need to edit one file.
 export const SOCIAL_LINKS = {
-  tiktok: 'https://www.tiktok.com/@your-handle', // TODO: replace with real TikTok URL
-  instagram: 'https://www.instagram.com/your-handle', // TODO: replace with real Instagram URL
-  facebook: 'https://www.facebook.com/your-page', // TODO: replace with real Facebook Page URL
-  youtube: 'https://www.youtube.com/@your-channel', // TODO: replace with real YouTube URL
+  tiktok: 'https://www.tiktok.com/@froshhype',
+  instagram: 'https://www.instagram.com/froshhype/',
+  facebook: 'https://www.facebook.com/profile.php?id=61550913838282',
+  youtube: 'https://www.youtube.com/@your-channel', // TODO: add your real YouTube channel URL here once you have one
 };
 
 export default function SocialLinks() {

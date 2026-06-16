@@ -1,7 +1,6 @@
-// Sends transactional emails via a provider's REST API using plain fetch
-// (no heavy SDK). Documented concretely for Resend, but any provider with an
-// HTTP API (SendGrid, Postmark, etc.) would follow the same pattern — just
-// change the URL/headers/body shape.
+// Sends transactional emails via SendGrid's REST API using plain fetch
+// (no heavy SDK). Any other provider with an HTTP API (Resend, Postmark,
+// etc.) would follow the same pattern — just change the URL/headers/body shape.
 //
 // Why this must be a backend function:
 // - Sending email requires an API key (EMAIL_API_KEY) that must stay secret.
@@ -59,27 +58,24 @@ export async function sendPurchaseConfirmationEmail({ to, lang = 'en', productId
     return { sent: false, reason: 'no_api_key' };
   }
 
-  // ---------------------------------------------------------------------
-  // TODO (real Resend integration) — https://resend.com/docs/api-reference/emails/send-email
-  // const res = await fetch('https://api.resend.com/emails', {
-  //   method: 'POST',
-  //   headers: {
-  //     Authorization: `Bearer ${EMAIL_API_KEY}`,
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     from: EMAIL_FROM,
-  //     to,
-  //     subject: `Your download: ${productName}`,
-  //     html,
-  //   }),
-  // });
-  // if (!res.ok) throw new Error(`Email provider error: ${res.status} ${await res.text()}`);
-  // return { sent: true };
-  // ---------------------------------------------------------------------
-
-  console.warn('send-email.js: provider call is a TODO. See comments for Resend example.');
-  return { sent: false, reason: 'provider_not_implemented' };
+  // SendGrid API reference: https://docs.sendgrid.com/api-reference/mail-send/mail-send
+  const res = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${EMAIL_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: to }] }],
+      from: { email: EMAIL_FROM },
+      subject: `Your download: ${productName}`,
+      content: [{ type: 'text/html', value: html }],
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`SendGrid error: ${res.status} ${await res.text()}`);
+  }
+  return { sent: true };
 }
 
 // HTTP entry point, in case you want to trigger emails directly (e.g. for testing).

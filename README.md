@@ -9,12 +9,12 @@ payments, email, and lead capture.
 
 GitHub Pages can **only serve static files** (HTML/CSS/JS). It cannot:
 
-- **Run server-side code.** Creating a Stripe Checkout Session, or verifying a
-  webhook signature, requires code that runs on a server you control.
+- **Run server-side code.** Creating a PayPal order, or verifying a webhook
+  signature, requires code that runs on a server you control.
 - **Hide secrets.** Anything shipped to the browser (including a "hidden" API
   key in JavaScript) is visible to anyone who opens devtools. Payment provider
   secret keys, email API keys, etc. must live only on a server.
-- **Receive webhooks.** Stripe (or any payment provider) calls your backend
+- **Receive webhooks.** PayPal (or any payment provider) calls your backend
   directly after a payment completes. A static site has no server endpoint to
   receive that call.
 
@@ -80,7 +80,7 @@ you're running the backend locally too (see below).
    already exists), then `netlify deploy --prod`.
 3. In the Netlify dashboard for that site, go to **Site configuration >
    Environment variables** and set all the variables listed in
-   `backend/.env.example` (Stripe keys, email API key, download secret, etc.).
+   `backend/.env.example` (PayPal keys, email API key, download secret, etc.).
 4. Note your function base URL, typically:
    `https://your-site-name.netlify.app/.netlify/functions`
    Set this as `VITE_API_BASE_URL` for the frontend build (see above).
@@ -124,30 +124,37 @@ Edit `frontend/src/data/affiliates.json` — add an entry with `id`, `image`,
 language. Affiliate cards automatically render with
 `rel="nofollow sponsored"` on their links.
 
-## Connecting a real payment provider (Stripe walkthrough)
+## Connecting a real payment provider (PayPal walkthrough)
 
-1. Create a Stripe account, get your API keys from
-   <https://dashboard.stripe.com/apikeys>.
-2. Set `STRIPE_SECRET_KEY` in your Netlify environment variables.
+1. Create a PayPal Developer account at <https://developer.paypal.com> and
+   create an app under **Apps & Credentials** (start in **Sandbox** mode to
+   test with fake money first).
+2. Copy the **Client ID** and **Secret** into `PAYPAL_CLIENT_ID` /
+   `PAYPAL_CLIENT_SECRET` in your Netlify environment variables. Leave
+   `PAYPAL_ENV=sandbox` until you're ready to accept real payments, then
+   switch it to `live` and use your live app's credentials instead.
 3. Open `backend/netlify/functions/create-checkout.js` — the TODO block shows
-   the exact `fetch` call to create a Checkout Session via Stripe's REST API
-   (no SDK needed). Uncomment/adapt it.
-4. Create a webhook endpoint in Stripe pointing to
+   the exact `fetch` calls to get an access token and create a PayPal Order
+   (Orders API v2, no SDK needed). Uncomment/adapt it.
+4. In the PayPal Developer Dashboard, go to your app > **Webhooks** > **Add
+   Webhook**, point it at
    `https://your-backend-site.netlify.app/.netlify/functions/payment-webhook`,
-   subscribed to `checkout.session.completed`. Copy the signing secret into
-   `STRIPE_WEBHOOK_SECRET`.
-5. `backend/netlify/functions/payment-webhook.js` already verifies the Stripe
-   signature correctly (HMAC-SHA256 over `timestamp.rawBody`) — the only TODO
-   left is mapping the real Stripe event shape if you change metadata field names.
+   and subscribe to at least `PAYMENT.CAPTURE.COMPLETED`. Copy the generated
+   **Webhook ID** into `PAYPAL_WEBHOOK_ID`.
+5. `backend/netlify/functions/payment-webhook.js` already implements real
+   PayPal webhook signature verification (via PayPal's "Verify Webhook
+   Signature" API) and only acts on `PAYMENT.CAPTURE.COMPLETED` events — no
+   further changes needed unless you rename the `custom_id` metadata fields.
 
-## Connecting a real email provider (Resend/SendGrid walkthrough)
+## Connecting a real email provider (SendGrid walkthrough)
 
-1. Sign up at <https://resend.com> (or SendGrid/Postmark/etc.) and verify a
-   sending domain.
-2. Get an API key, set `EMAIL_API_KEY` and `EMAIL_FROM` in Netlify environment variables.
-3. Open `backend/netlify/functions/send-email.js` — uncomment the `fetch`
-   call in the TODO block (a working Resend example is included). For another
-   provider, swap the URL/headers/body to match their REST API.
+1. Sign up at <https://sendgrid.com> and verify a sender identity (Settings >
+   Sender Authentication) — either a single sender address or a full domain.
+2. Create an API key (Settings > API Keys, "Mail Send" permission), set
+   `EMAIL_API_KEY` and `EMAIL_FROM` (must match your verified sender) in
+   Netlify environment variables.
+3. `backend/netlify/functions/send-email.js` already implements the real
+   SendGrid API call — no further changes needed unless you switch providers.
 
 ## Security notes
 
@@ -155,8 +162,8 @@ language. Affiliate cards automatically render with
   time-limited tokens (`DOWNLOAD_LINK_SECRET`) so paid file URLs can't be
   guessed or shared indefinitely.
 - **Webhook signature verification**: `payment-webhook.js` rejects any request
-  that doesn't carry a valid signature for `STRIPE_WEBHOOK_SECRET` — this stops
-  attackers from faking "payment completed" events to get free downloads.
+  that PayPal's "Verify Webhook Signature" API doesn't confirm as authentic —
+  this stops attackers from faking "payment completed" events to get free downloads.
 - **Never commit `.env` files.** Both `frontend/.env.example` and
   `backend/.env.example` are templates only; real `.env` files are gitignored.
 - The `/admin` page is a **convenience viewer only**, not real authentication
@@ -179,11 +186,12 @@ backend + database and is out of scope for this MVP.
 
 ## Before going live, you must:
 
-- [ ] Replace `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` placeholders and
-      implement the real Stripe `fetch` calls in `create-checkout.js` (the
-      structure is correct; the actual API call is commented out as a TODO).
-- [ ] Replace `EMAIL_API_KEY` / `EMAIL_FROM` and implement the real provider
-      call in `send-email.js` (Resend example included, commented out).
+- [ ] Replace `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` / `PAYPAL_WEBHOOK_ID`
+      placeholders and uncomment the real PayPal order-creation `fetch` calls
+      in `create-checkout.js` (the structure is correct; the actual API call
+      is commented out as a TODO). Switch `PAYPAL_ENV` to `live` when ready.
+- [ ] Replace `EMAIL_API_KEY` / `EMAIL_FROM` with your real SendGrid values
+      (the SendGrid API call in `send-email.js` is already implemented).
 - [ ] Generate a real `DOWNLOAD_LINK_SECRET` (e.g. `openssl rand -hex 32`).
 - [ ] Set a real `PRODUCT_FILE_BASE_URL` pointing at private file storage that
       holds your actual paid product files (S3, Supabase Storage, etc.) —
@@ -192,8 +200,8 @@ backend + database and is out of scope for this MVP.
       real free-sample PDFs/ZIPs.
 - [ ] Replace placeholder product images in `frontend/public/images/` with
       real artwork/photos.
-- [ ] Replace placeholder social links in `frontend/src/components/SocialLinks.jsx`
-      with your real TikTok / Instagram / Facebook / YouTube URLs.
+- [ ] Add your real YouTube channel URL in `frontend/src/components/SocialLinks.jsx`
+      (TikTok / Instagram / Facebook are already set to your real profiles).
 - [ ] Replace placeholder affiliate URLs in `frontend/src/data/affiliates.json`
       with your real affiliate links.
 - [ ] Replace `SUPPORT_EMAIL` placeholder in `frontend/src/components/Footer.jsx`

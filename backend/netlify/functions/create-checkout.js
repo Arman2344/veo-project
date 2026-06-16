@@ -1,16 +1,39 @@
-// Creates a checkout session for a product and returns a redirect URL.
+// Creates a PayPal order and returns the approval URL the browser should
+// redirect the buyer to.
 //
-// This is a clearly-marked REAL STRUCTURE for Stripe Checkout, but the actual
-// call to Stripe's API is a TODO — you must plug in your own Stripe secret key
-// and (optionally) the Stripe Node SDK or raw REST calls to go live.
+// This is a clearly-marked REAL STRUCTURE for the PayPal Orders API v2, but
+// the actual call to PayPal is a TODO — you must plug in your own
+// PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET to go live.
 //
 // Why this can't live only in the frontend (GitHub Pages):
-// - Creating a Checkout Session requires your STRIPE_SECRET_KEY, which must
-//   NEVER be exposed in client-side code. GitHub Pages can only serve static
-//   files, so there is no safe place to keep that secret. Netlify Functions
-//   run on a server where env vars stay private.
+// - Creating an order with PayPal's API requires your PAYPAL_CLIENT_SECRET,
+//   which must NEVER be exposed in client-side code. GitHub Pages can only
+//   serve static files, so there is no safe place to keep that secret.
+//   Netlify Functions run on a server where env vars stay private.
 import { findProduct } from '../../lib/products.js';
 import { jsonResponse, corsHeaders } from '../../lib/cors.js';
+
+// PayPal has separate API hosts for sandbox (testing) and live (real money).
+// Switch this once you're ready to accept real payments.
+const PAYPAL_API_BASE = process.env.PAYPAL_ENV === 'live'
+  ? 'https://api-m.paypal.com'
+  : 'https://api-m.sandbox.paypal.com';
+
+async function getPayPalAccessToken(clientId, clientSecret) {
+  const res = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'grant_type=client_credentials',
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to get PayPal access token: ${res.status}`);
+  }
+  const data = await res.json();
+  return data.access_token;
+}
 
 export async function handler(event) {
   if (event.httpMethod === 'OPTIONS') {
@@ -33,49 +56,58 @@ export async function handler(event) {
     return jsonResponse(404, { error: 'Unknown productId' });
   }
 
-  const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
+  const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+  const PAYPAL_CLIENT_SECRET = process.env.PAYPAL_CLIENT_SECRET;
   const SITE_URL = process.env.SITE_URL || 'http://localhost:5173';
 
-  if (!STRIPE_SECRET_KEY) {
+  if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
     // No payment provider configured yet — fail loudly and clearly instead of
     // pretending the purchase worked. This is intentional: we do not want a
     // fake "success" flow that silently does nothing.
     return jsonResponse(501, {
-      error: 'Payment provider not configured. Set STRIPE_SECRET_KEY in your Netlify environment variables.',
+      error: 'Payment provider not configured. Set PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET in your Netlify environment variables.',
     });
   }
 
   // ---------------------------------------------------------------------
-  // TODO (real Stripe integration):
-  // Use Stripe's REST API directly (no SDK needed, just fetch) to create a
-  // Checkout Session, e.g.:
+  // TODO (real PayPal integration): uncomment once your PayPal app credentials
+  // are set in Netlify. This creates a PayPal Order in "CAPTURE" intent and
+  // returns the "approve" link for the browser to redirect to.
   //
-  // const params = new URLSearchParams({
-  //   'mode': 'payment',
-  //   'success_url': `${SITE_URL}/#/thank-you?session_id={CHECKOUT_SESSION_ID}`,
-  //   'cancel_url': `${SITE_URL}/#/products/${product.id}`,
-  //   'line_items[0][price_data][currency]': product.currency.toLowerCase(),
-  //   'line_items[0][price_data][product_data][name]': product.title[lang] || product.title.en,
-  //   'line_items[0][price_data][unit_amount]': String(product.price * 100), // cents
-  //   'line_items[0][quantity]': '1',
-  //   'metadata[productId]': product.id,
-  //   'metadata[lang]': lang || 'en',
-  // });
+  // const accessToken = await getPayPalAccessToken(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET);
   //
-  // const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
+  // const orderRes = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
   //   method: 'POST',
   //   headers: {
-  //     Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
-  //     'Content-Type': 'application/x-www-form-urlencoded',
+  //     Authorization: `Bearer ${accessToken}`,
+  //     'Content-Type': 'application/json',
   //   },
-  //   body: params,
+  //   body: JSON.stringify({
+  //     intent: 'CAPTURE',
+  //     purchase_units: [
+  //       {
+  //         custom_id: JSON.stringify({ productId: product.id, lang: lang || 'en' }),
+  //         amount: {
+  //           currency_code: product.currency,
+  //           value: product.price.toFixed(2),
+  //         },
+  //         description: (product.title[lang] || product.title.en).slice(0, 127),
+  //       },
+  //     ],
+  //     application_context: {
+  //       brand_name: 'Your Brand Name',
+  //       return_url: `${SITE_URL}/#/thank-you?productId=${product.id}`,
+  //       cancel_url: `${SITE_URL}/#/products/${product.id}`,
+  //     },
+  //   }),
   // });
-  // const session = await stripeRes.json();
-  // if (!stripeRes.ok) return jsonResponse(502, { error: 'Stripe error', details: session });
-  // return jsonResponse(200, { url: session.url });
+  // const order = await orderRes.json();
+  // if (!orderRes.ok) return jsonResponse(502, { error: 'PayPal error', details: order });
+  // const approveLink = order.links?.find((l) => l.rel === 'approve')?.href;
+  // return jsonResponse(200, { url: approveLink });
   // ---------------------------------------------------------------------
 
   return jsonResponse(501, {
-    error: 'create-checkout is a placeholder. Implement the Stripe (or other provider) call above before going live.',
+    error: 'create-checkout is a placeholder. Implement the PayPal order creation call above before going live.',
   });
 }
