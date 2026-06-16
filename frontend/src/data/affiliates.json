@@ -1,0 +1,62 @@
+[
+  {
+    "id": "canva-pro",
+    "image": "/images/affiliates/canva.svg",
+    "url": "https://partner.canva.com/REPLACE_WITH_YOUR_AFFILIATE_LINK",
+    "name": {
+      "en": "Canva Pro",
+      "de": "Canva Pro",
+      "fa": "کانوا پرو"
+    },
+    "description": {
+      "en": "The design tool behind almost every template in our pack. Great for creating your own graphics fast.",
+      "de": "Das Design-Tool hinter fast jeder Vorlage in unserem Paket. Ideal, um eigene Grafiken schnell zu erstellen.",
+      "fa": "ابزار طراحی پشت تقریباً همه قالب‌های پکیج ما. عالی برای ساخت سریع گرافیک‌های شخصی."
+    },
+    "benefit": {
+      "en": "Free 30-day trial via our link",
+      "de": "Kostenlose 30-Tage-Testversion über unseren Link",
+      "fa": "آزمایش رایگان ۳۰ روزه از طریق لینک ما"
+    }
+  },
+  {
+    "id": "notion",
+    "image": "/images/affiliates/notion.svg",
+    "url": "https://affiliate.notion.so/REPLACE_WITH_YOUR_AFFILIATE_LINK",
+    "name": {
+      "en": "Notion",
+      "de": "Notion",
+      "fa": "نوشن (Notion)"
+    },
+    "description": {
+      "en": "Our go-to tool for planning content, tracking sales, and organizing the whole creator business in one place.",
+      "de": "Unser bevorzugtes Tool zur Inhaltsplanung, Verkaufsverfolgung und Organisation des gesamten Creator-Business an einem Ort.",
+      "fa": "ابزار اصلی ما برای برنامه‌ریزی محتوا، پیگیری فروش و سازمان‌دهی کل کسب‌وکار کریتوری در یک مکان."
+    },
+    "benefit": {
+      "en": "Free personal plan, no card needed",
+      "de": "Kostenloser persönlicher Plan, keine Karte nötig",
+      "fa": "پلن شخصی رایگان، بدون نیاز به کارت"
+    }
+  },
+  {
+    "id": "convertkit",
+    "image": "/images/affiliates/convertkit.svg",
+    "url": "https://convertkit.com?lmref=REPLACE_WITH_YOUR_AFFILIATE_LINK",
+    "name": {
+      "en": "Kit (formerly ConvertKit)",
+      "de": "Kit (ehemals ConvertKit)",
+      "fa": "کیت (سابقاً کانورت‌کیت)"
+    },
+    "description": {
+      "en": "Email marketing built for creators — what we use to deliver lead magnets and announce new products.",
+      "de": "E-Mail-Marketing für Creator gemacht – damit liefern wir Lead-Magneten aus und kündigen neue Produkte an.",
+      "fa": "ابزار بازاریابی ایمیلی ساخته‌شده برای کریتورها — همان چیزی که ما برای ارسال لید مگنت و اعلام محصولات جدید استفاده می‌کنیم."
+    },
+    "benefit": {
+      "en": "Free up to 10,000 subscribers",
+      "de": "Kostenlos bis zu 10.000 Abonnenten",
+      "fa": "رایگان تا ۱۰,۰۰۰ مشترک"
+    }
+  }
+]

@@ -1,0 +1,76 @@
+{
+  "nav": {
+    "home": "Start",
+    "products": "Produkte",
+    "affiliates": "Empfohlene Tools",
+    "admin": "Admin"
+  },
+  "hero": {
+    "headline": "Praktische Leitfäden & Vorlagen für dein Creator-Business",
+    "subheadline": "PDF-Bücher, Social-Media-Vorlagen und Schritt-für-Schritt-Anleitungen für echte Creator — keine Theorie.",
+    "ctaFreeSample": "Kostenlose Probe herunterladen",
+    "ctaBuyFull": "Vollversion kaufen",
+    "ctaAffiliates": "Empfohlene Tools ansehen"
+  },
+  "trust": {
+    "title": "Warum man uns vertraut",
+    "securePayment": "Sichere Zahlung",
+    "securePaymentDesc": "Der Checkout ist verschlüsselt und wird von vertrauenswürdigen Zahlungsanbietern abgewickelt.",
+    "instantDelivery": "Sofortige Lieferung",
+    "instantDeliveryDesc": "Erhalte deinen Download-Link sofort nach dem Kauf per E-Mail.",
+    "moneyBack": "Faire Rückgaberichtlinie",
+    "moneyBackDesc": "Nicht zufrieden? Melde dich innerhalb von 14 Tagen und wir finden eine Lösung."
+  },
+  "products": {
+    "title": "Unsere Produkte",
+    "subtitle": "Praktische PDF-Leitfäden und Vorlagen, von Creators für Creators.",
+    "buyNow": "Jetzt kaufen",
+    "freeSample": "Kostenlose Probe",
+    "viewDetails": "Details ansehen",
+    "price": "Preis",
+    "whatsIncluded": "Was ist enthalten",
+    "benefits": "Vorteile",
+    "faq": "Häufig gestellte Fragen",
+    "secureDelivery": "Sichere, sofortige digitale Lieferung nach Zahlung.",
+    "buy": "Dieses Produkt kaufen"
+  },
+  "affiliates": {
+    "title": "Empfohlene Tools",
+    "subtitle": "Tools, die wir wirklich nutzen und für ein Creator-Business empfehlen.",
+    "cta": "Jetzt ansehen",
+    "disclosure": "Einige Links sind Affiliate-Links — wir erhalten möglicherweise eine kleine Provision, ohne zusätzliche Kosten für dich."
+  },
+  "email": {
+    "title": "Erhalte kostenlose Tipps & einen kostenlosen Leitfaden",
+    "subtitle": "Trage dich ein und erhalte ein kostenloses PDF sowie gelegentliche Tipps. Kein Spam.",
+    "placeholder": "Deine E-Mail-Adresse",
+    "submit": "Sende mir die kostenlose Probe",
+    "success": "Danke! Schau in dein Postfach für die kostenlose Probe.",
+    "error": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+  },
+  "footer": {
+    "rights": "Alle Rechte vorbehalten.",
+    "followUs": "Folge uns",
+    "contact": "Kontakt"
+  },
+  "thankYou": {
+    "title": "Danke für deinen Kauf!",
+    "message": "Deine Bestellung war erfolgreich. Schau in deine E-Mail für den Download-Link und die Quittung.",
+    "checkEmail": "Wir haben alles an deine E-Mail-Adresse gesendet.",
+    "support": "Brauchst du Hilfe? Kontaktiere uns unter",
+    "backHome": "Zurück zur Startseite"
+  },
+  "admin": {
+    "title": "Admin (Nur-Lese-Ansicht)",
+    "passwordPrompt": "Zugangscode eingeben",
+    "submit": "Ansehen",
+    "wrongPassword": "Falscher Code",
+    "notice": "Dies ist nur eine bequeme Ansicht — KEINE sichere Authentifizierung. Bearbeite products.json / affiliates.json über GitHub für echte Änderungen.",
+    "products": "Produktdaten",
+    "affiliates": "Affiliate-Daten"
+  },
+  "faqSection": {
+    "title": "Häufig gestellte Fragen"
+  },
+  "language": "Sprache"
+}

@@ -1,0 +1,131 @@
+[
+  {
+    "id": "mindful-parenting-guide",
+    "image": "/images/products/parenting-guide.svg",
+    "price": 19,
+    "currency": "USD",
+    "hasFreeSample": true,
+    "freeSampleFile": "mindful-parenting-sample.pdf",
+    "fullFile": "mindful-parenting-full.pdf",
+    "title": {
+      "en": "The Mindful Parenting Guide",
+      "de": "Der Leitfaden für achtsame Elternschaft",
+      "fa": "راهنمای والدگری آگاهانه"
+    },
+    "description": {
+      "en": "A practical, no-fluff PDF guide to raising calm, confident kids — even on the hard days. 80 pages of real strategies, scripts, and routines.",
+      "de": "Ein praktischer PDF-Leitfaden ohne Schnickschnack, um ruhige, selbstbewusste Kinder zu erziehen – auch an schwierigen Tagen. 80 Seiten mit echten Strategien, Skripten und Routinen.",
+      "fa": "یک راهنمای کاربردی و بدون حاشیه برای تربیت فرزندانی آرام و با اعتماد به نفس — حتی در روزهای سخت. ۸۰ صفحه پر از راهکار، گفت‌وگوهای آماده و روتین‌های روزانه."
+    },
+    "benefits": {
+      "en": ["Calm-down scripts for meltdowns", "Daily routines that actually stick", "Age-by-age communication tips", "Printable habit trackers"],
+      "de": ["Beruhigungsskripte für Wutanfälle", "Tagesroutinen, die wirklich funktionieren", "Kommunikationstipps nach Alter", "Druckbare Gewohnheits-Tracker"],
+      "fa": ["گفت‌وگوهای آماده برای آرام کردن کودک", "روتین‌های روزانه که واقعاً اجرا می‌شوند", "نکات ارتباطی بر اساس سن کودک", "ردیاب‌های عادت قابل چاپ"]
+    },
+    "included": {
+      "en": ["80-page PDF guide", "10 printable worksheets", "Quick-reference cheat sheet", "Lifetime updates"],
+      "de": ["80-seitiger PDF-Leitfaden", "10 druckbare Arbeitsblätter", "Kurz-Spickzettel", "Lebenslange Updates"],
+      "fa": ["راهنمای PDF ۸۰ صفحه‌ای", "۱۰ کاربرگ قابل چاپ", "برگه راهنمای سریع", "به‌روزرسانی مادام‌العمر"]
+    },
+    "faq": {
+      "en": [
+        {"q": "What format is the guide?", "a": "It's a downloadable PDF you can read on any device or print at home."},
+        {"q": "Is there a refund policy?", "a": "Yes — if it's not a fit, contact support within 14 days for a refund."}
+      ],
+      "de": [
+        {"q": "In welchem Format ist der Leitfaden?", "a": "Es ist ein herunterladbares PDF, das du auf jedem Gerät lesen oder zu Hause ausdrucken kannst."},
+        {"q": "Gibt es eine Rückgaberichtlinie?", "a": "Ja — wenn es nicht passt, kontaktiere den Support innerhalb von 14 Tagen für eine Rückerstattung."}
+      ],
+      "fa": [
+        {"q": "فرمت راهنما چیست؟", "a": "این یک فایل PDF قابل دانلود است که می‌توانید روی هر دستگاهی بخوانید یا در خانه چاپ کنید."},
+        {"q": "آیا امکان بازگشت پول وجود دارد؟", "a": "بله — اگر مناسب شما نبود، ظرف ۱۴ روز با پشتیبانی تماس بگیرید تا پول بازگردانده شود."}
+      ]
+    }
+  },
+  {
+    "id": "creator-social-template-pack",
+    "image": "/images/products/template-pack.svg",
+    "price": 15,
+    "currency": "USD",
+    "hasFreeSample": true,
+    "freeSampleFile": "template-pack-sample.zip",
+    "fullFile": "template-pack-full.zip",
+    "title": {
+      "en": "Creator Social Media Template Pack",
+      "de": "Social-Media-Vorlagenpaket für Creator",
+      "fa": "پکیج قالب‌های شبکه‌های اجتماعی برای کریتورها"
+    },
+    "description": {
+      "en": "50 editable templates for Instagram, TikTok, and Facebook posts/stories — designed to grow your following and save hours every week.",
+      "de": "50 bearbeitbare Vorlagen für Instagram-, TikTok- und Facebook-Beiträge/Storys – entwickelt, um deine Follower zu vergrößern und jede Woche Stunden zu sparen.",
+      "fa": "۵۰ قالب قابل ویرایش برای پست‌ها و استوری‌های اینستاگرام، تیک‌تاک و فیسبوک — طراحی‌شده برای رشد دنبال‌کننده‌ها و صرفه‌جویی در ساعت‌ها وقت هر هفته."
+    },
+    "benefits": {
+      "en": ["50 ready-to-edit designs", "Consistent, on-brand look", "Works in Canva (free version)", "Story + feed sizes included"],
+      "de": ["50 sofort bearbeitbare Designs", "Einheitlicher, markengerechter Look", "Funktioniert in Canva (kostenlose Version)", "Story- und Feed-Größen enthalten"],
+      "fa": ["۵۰ طرح آماده ویرایش", "ظاهر یکدست و برند‌محور", "قابل استفاده در کانوا (نسخه رایگان)", "شامل سایزهای استوری و فید"]
+    },
+    "included": {
+      "en": ["50 Canva templates (link-based)", "Color palette guide", "Font pairing guide", "Posting checklist PDF"],
+      "de": ["50 Canva-Vorlagen (Link-basiert)", "Farbpalette-Leitfaden", "Schriftpaarungs-Leitfaden", "Checkliste für Posts (PDF)"],
+      "fa": ["۵۰ قالب کانوا (به‌صورت لینک)", "راهنمای پالت رنگ", "راهنمای ترکیب فونت", "چک‌لیست انتشار پست (PDF)"]
+    },
+    "faq": {
+      "en": [
+        {"q": "Do I need paid Canva?", "a": "No, all templates work with the free version of Canva."},
+        {"q": "Can I resell these templates?", "a": "No, they're for personal/business use only, not resale."}
+      ],
+      "de": [
+        {"q": "Brauche ich Canva Pro?", "a": "Nein, alle Vorlagen funktionieren mit der kostenlosen Version von Canva."},
+        {"q": "Darf ich die Vorlagen weiterverkaufen?", "a": "Nein, sie sind nur für persönliche/geschäftliche Nutzung, nicht zum Weiterverkauf."}
+      ],
+      "fa": [
+        {"q": "آیا به کانوای پولی نیاز دارم؟", "a": "نه، همه قالب‌ها با نسخه رایگان کانوا کار می‌کنند."},
+        {"q": "آیا می‌توانم این قالب‌ها را دوباره بفروشم؟", "a": "نه، فقط برای استفاده شخصی/تجاری هستند، نه فروش مجدد."}
+      ]
+    }
+  },
+  {
+    "id": "ebook-business-blueprint",
+    "image": "/images/products/ebook-guide.svg",
+    "price": 25,
+    "currency": "USD",
+    "hasFreeSample": true,
+    "freeSampleFile": "ebook-blueprint-sample.pdf",
+    "fullFile": "ebook-blueprint-full.pdf",
+    "title": {
+      "en": "Write & Sell Your First PDF Book — The Blueprint",
+      "de": "Schreibe & verkaufe dein erstes PDF-Buch — Der Bauplan",
+      "fa": "نوشتن و فروش اولین کتاب PDF شما — نقشه راه"
+    },
+    "description": {
+      "en": "Step-by-step guide for creators who want to turn knowledge into a sellable PDF book — from outline to first sale, no audience required.",
+      "de": "Schritt-für-Schritt-Anleitung für Creator, die Wissen in ein verkäufliches PDF-Buch verwandeln wollen – vom Entwurf bis zum ersten Verkauf, keine Zielgruppe nötig.",
+      "fa": "راهنمای گام‌به‌گام برای کریتورهایی که می‌خواهند دانش خود را به یک کتاب PDF قابل فروش تبدیل کنند — از طرح کلی تا اولین فروش، بدون نیاز به مخاطب از پیش موجود."
+    },
+    "benefits": {
+      "en": ["Proven outline structure", "Pricing & launch strategy", "Simple cover design tips", "Where to sell without a big audience"],
+      "de": ["Erprobte Gliederungsstruktur", "Preis- und Launch-Strategie", "Einfache Tipps zum Cover-Design", "Wo man ohne große Zielgruppe verkauft"],
+      "fa": ["ساختار طرح کلی اثبات‌شده", "استراتژی قیمت‌گذاری و راه‌اندازی", "نکات ساده طراحی جلد", "کجا بدون مخاطب بزرگ بفروشیم"]
+    },
+    "included": {
+      "en": ["60-page PDF blueprint", "Outline template", "Launch checklist", "Email swipe copy examples"],
+      "de": ["60-seitiger PDF-Bauplan", "Gliederungsvorlage", "Launch-Checkliste", "Beispiele für E-Mail-Texte"],
+      "fa": ["نقشه راه PDF ۶۰ صفحه‌ای", "قالب طرح کلی", "چک‌لیست راه‌اندازی", "نمونه متن‌های ایمیل تبلیغاتی"]
+    },
+    "faq": {
+      "en": [
+        {"q": "Do I need writing experience?", "a": "No — the blueprint is built for total beginners."},
+        {"q": "How long until I can publish?", "a": "Most people finish a first draft within 2-3 weeks following the guide."}
+      ],
+      "de": [
+        {"q": "Brauche ich Schreiberfahrung?", "a": "Nein — der Bauplan ist für absolute Anfänger gemacht."},
+        {"q": "Wie lange dauert es bis zur Veröffentlichung?", "a": "Die meisten Leute beenden einen ersten Entwurf innerhalb von 2-3 Wochen."}
+      ],
+      "fa": [
+        {"q": "آیا به تجربه نویسندگی نیاز دارم؟", "a": "نه — این نقشه راه برای مبتدیان کامل طراحی شده است."},
+        {"q": "چقدر طول می‌کشد تا منتشر کنم؟", "a": "بیشتر افراد با دنبال کردن این راهنما در ۲ تا ۳ هفته اولین نسخه را تمام می‌کنند."}
+      ]
+    }
+  }
+]

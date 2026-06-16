@@ -1,0 +1,18 @@
+# Netlify configuration for the backend (serverless functions only).
+# This is deployed as its own Netlify site, separate from the GitHub Pages frontend.
+
+[build]
+  functions = "netlify/functions"
+  # No "publish" build needed since we're not serving a static site here —
+  # but Netlify requires *some* publish directory. An empty folder works fine,
+  # or you can point it at a tiny placeholder.
+  publish = "public"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = false

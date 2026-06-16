@@ -1,0 +1,76 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "affiliates": "Recommended Tools",
+    "admin": "Admin"
+  },
+  "hero": {
+    "headline": "Practical guides & templates to grow your creator business",
+    "subheadline": "PDF books, social media templates, and step-by-step guides made for real creators — not theory.",
+    "ctaFreeSample": "Download Free Sample",
+    "ctaBuyFull": "Buy Full Version",
+    "ctaAffiliates": "View Recommended Tools"
+  },
+  "trust": {
+    "title": "Why people trust us",
+    "securePayment": "Secure payment",
+    "securePaymentDesc": "Checkout is encrypted and handled by trusted payment providers.",
+    "instantDelivery": "Instant delivery",
+    "instantDeliveryDesc": "Get your download link by email right after purchase.",
+    "moneyBack": "Fair refund policy",
+    "moneyBackDesc": "Not happy? Reach out within 14 days and we'll sort it out."
+  },
+  "products": {
+    "title": "Our Products",
+    "subtitle": "Practical PDF guides and templates, made by creators for creators.",
+    "buyNow": "Buy Now",
+    "freeSample": "Free Sample",
+    "viewDetails": "View Details",
+    "price": "Price",
+    "whatsIncluded": "What's Included",
+    "benefits": "Benefits",
+    "faq": "Frequently Asked Questions",
+    "secureDelivery": "Secure, instant digital delivery after payment.",
+    "buy": "Buy This Product"
+  },
+  "affiliates": {
+    "title": "Recommended Tools",
+    "subtitle": "Tools we actually use and recommend for running a creator business.",
+    "cta": "Check it out",
+    "disclosure": "Some links are affiliate links — we may earn a small commission at no extra cost to you."
+  },
+  "email": {
+    "title": "Get free tips & a free sample guide",
+    "subtitle": "Join our list and get a free sample PDF plus occasional tips. No spam.",
+    "placeholder": "Your email address",
+    "submit": "Send me the free sample",
+    "success": "Thanks! Check your inbox for the free sample.",
+    "error": "Something went wrong. Please try again."
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "followUs": "Follow us",
+    "contact": "Contact"
+  },
+  "thankYou": {
+    "title": "Thank you for your purchase!",
+    "message": "Your order was successful. Check your email for the download link and receipt.",
+    "checkEmail": "We've sent everything to your email address.",
+    "support": "Need help? Contact us at",
+    "backHome": "Back to Home"
+  },
+  "admin": {
+    "title": "Admin (Read-Only Viewer)",
+    "passwordPrompt": "Enter access code",
+    "submit": "View",
+    "wrongPassword": "Incorrect code",
+    "notice": "This is a convenience viewer only — NOT secure authentication. Edit products.json / affiliates.json via GitHub to make real changes.",
+    "products": "Products data",
+    "affiliates": "Affiliates data"
+  },
+  "faqSection": {
+    "title": "Frequently Asked Questions"
+  },
+  "language": "Language"
+}
