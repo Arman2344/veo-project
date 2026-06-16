@@ -1,10 +1,6 @@
 // Creates a PayPal order and returns the approval URL the browser should
 // redirect the buyer to.
 //
-// This is a clearly-marked REAL STRUCTURE for the PayPal Orders API v2, but
-// the actual call to PayPal is a TODO — you must plug in your own
-// PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET to go live.
-//
 // Why this can't live only in the frontend (GitHub Pages):
 // - Creating an order with PayPal's API requires your PAYPAL_CLIENT_SECRET,
 //   which must NEVER be exposed in client-side code. GitHub Pages can only
@@ -69,45 +65,35 @@ export async function handler(event) {
     });
   }
 
-  // ---------------------------------------------------------------------
-  // TODO (real PayPal integration): uncomment once your PayPal app credentials
-  // are set in Netlify. This creates a PayPal Order in "CAPTURE" intent and
-  // returns the "approve" link for the browser to redirect to.
-  //
-  // const accessToken = await getPayPalAccessToken(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET);
-  //
-  // const orderRes = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
-  //   method: 'POST',
-  //   headers: {
-  //     Authorization: `Bearer ${accessToken}`,
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     intent: 'CAPTURE',
-  //     purchase_units: [
-  //       {
-  //         custom_id: JSON.stringify({ productId: product.id, lang: lang || 'en' }),
-  //         amount: {
-  //           currency_code: product.currency,
-  //           value: product.price.toFixed(2),
-  //         },
-  //         description: (product.title[lang] || product.title.en).slice(0, 127),
-  //       },
-  //     ],
-  //     application_context: {
-  //       brand_name: 'Your Brand Name',
-  //       return_url: `${SITE_URL}/#/thank-you?productId=${product.id}`,
-  //       cancel_url: `${SITE_URL}/#/products/${product.id}`,
-  //     },
-  //   }),
-  // });
-  // const order = await orderRes.json();
-  // if (!orderRes.ok) return jsonResponse(502, { error: 'PayPal error', details: order });
-  // const approveLink = order.links?.find((l) => l.rel === 'approve')?.href;
-  // return jsonResponse(200, { url: approveLink });
-  // ---------------------------------------------------------------------
+  const accessToken = await getPayPalAccessToken(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET);
 
-  return jsonResponse(501, {
-    error: 'create-checkout is a placeholder. Implement the PayPal order creation call above before going live.',
+  const orderRes = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      intent: 'CAPTURE',
+      purchase_units: [
+        {
+          custom_id: JSON.stringify({ productId: product.id, lang: lang || 'en' }),
+          amount: {
+            currency_code: product.currency,
+            value: product.price.toFixed(2),
+          },
+          description: (product.title[lang] || product.title.en).slice(0, 127),
+        },
+      ],
+      application_context: {
+        brand_name: 'CreatorCraft',
+        return_url: `${SITE_URL}/#/thank-you?productId=${product.id}`,
+        cancel_url: `${SITE_URL}/#/products/${product.id}`,
+      },
+    }),
   });
+  const order = await orderRes.json();
+  if (!orderRes.ok) return jsonResponse(502, { error: 'PayPal error', details: order });
+  const approveLink = order.links?.find((l) => l.rel === 'approve')?.href;
+  return jsonResponse(200, { url: approveLink });
 }
