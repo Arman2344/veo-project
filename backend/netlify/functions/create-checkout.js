@@ -25,7 +25,8 @@ async function getPayPalAccessToken(clientId, clientSecret) {
     body: 'grant_type=client_credentials',
   });
   if (!res.ok) {
-    throw new Error(`Failed to get PayPal access token: ${res.status}`);
+    const text = await res.text();
+    throw new Error(`Failed to get PayPal access token: ${res.status} ${text}`);
   }
   const data = await res.json();
   return data.access_token;
@@ -65,35 +66,43 @@ export async function handler(event) {
     });
   }
 
-  const accessToken = await getPayPalAccessToken(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET);
+  try {
+    const accessToken = await getPayPalAccessToken(PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET);
 
-  const orderRes = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      intent: 'CAPTURE',
-      purchase_units: [
-        {
-          custom_id: JSON.stringify({ productId: product.id, lang: lang || 'en' }),
-          amount: {
-            currency_code: product.currency,
-            value: product.price.toFixed(2),
-          },
-          description: (product.title[lang] || product.title.en).slice(0, 127),
-        },
-      ],
-      application_context: {
-        brand_name: 'CreatorCraft',
-        return_url: `${SITE_URL}/#/thank-you?productId=${product.id}`,
-        cancel_url: `${SITE_URL}/#/products/${product.id}`,
+    const orderRes = await fetch(`${PAYPAL_API_BASE}/v2/checkout/orders`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
       },
-    }),
-  });
-  const order = await orderRes.json();
-  if (!orderRes.ok) return jsonResponse(502, { error: 'PayPal error', details: order });
-  const approveLink = order.links?.find((l) => l.rel === 'approve')?.href;
-  return jsonResponse(200, { url: approveLink });
+      body: JSON.stringify({
+        intent: 'CAPTURE',
+        purchase_units: [
+          {
+            custom_id: JSON.stringify({ productId: product.id, lang: lang || 'en' }),
+            amount: {
+              currency_code: product.currency,
+              value: product.price.toFixed(2),
+            },
+            description: (product.title[lang] || product.title.en).slice(0, 127),
+          },
+        ],
+        application_context: {
+          brand_name: 'CreatorCraft',
+          return_url: `${SITE_URL}/#/thank-you?productId=${product.id}`,
+          cancel_url: `${SITE_URL}/#/products/${product.id}`,
+        },
+      }),
+    });
+    const order = await orderRes.json();
+    if (!orderRes.ok) {
+      console.error('PayPal order creation failed:', JSON.stringify(order));
+      return jsonResponse(502, { error: 'PayPal error', details: order });
+    }
+    const approveLink = order.links?.find((l) => l.rel === 'approve')?.href;
+    return jsonResponse(200, { url: approveLink });
+  } catch (err) {
+    console.error('create-checkout failed:', err.message);
+    return jsonResponse(500, { error: 'Checkout failed', details: err.message });
+  }
 }
