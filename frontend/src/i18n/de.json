@@ -36,9 +36,15 @@
   },
   "affiliates": {
     "title": "Empfohlene Tools",
-    "subtitle": "Tools, die wir wirklich nutzen und für ein Creator-Business empfehlen.",
-    "cta": "Jetzt ansehen",
-    "disclosure": "Einige Links sind Affiliate-Links — wir erhalten möglicherweise eine kleine Provision, ohne zusätzliche Kosten für dich."
+    "subtitle": "Tools für Design, Organisation und E-Mail-Marketing. Ohne Behauptungen zur eigenen Nutzung oder zu Sonderangeboten.",
+    "disclosure": "Offizielle Produktlinks sind von Affiliate-Links getrennt. Falls ein verifizierter Affiliate-Link ergänzt wird, kennzeichnen wir ihn; wir könnten dadurch eine Provision erhalten. Aktuelle Preise und Bedingungen bitte beim Anbieter prüfen.",
+    "noVerifiedLinks": "Für diese Tools sind derzeit keine verifizierten Affiliate-Links hinterlegt.",
+    "officialCta": "Offizielle Website besuchen",
+    "affiliateCta": "Über Affiliate-Link besuchen",
+    "unavailableCta": "Link nicht verfügbar",
+    "officialLabel": "Direktlink zur offiziellen Website; kein Provisionslink von uns.",
+    "affiliateLabel": "Affiliate-Link; möglicherweise erhalten wir eine Provision.",
+    "unavailableLabel": "Für dieses Tool liegt keine gültige, verifizierte Zieladresse vor."
   },
   "email": {
     "title": "Erhalte kostenlose Tipps & einen kostenlosen Leitfaden",

@@ -36,9 +36,15 @@
   },
   "affiliates": {
     "title": "Recommended Tools",
-    "subtitle": "Tools we actually use and recommend for running a creator business.",
-    "cta": "Check it out",
-    "disclosure": "Some links are affiliate links — we may earn a small commission at no extra cost to you."
+    "subtitle": "Tools for design, organization, and email marketing. No claims about our personal use or special offers.",
+    "disclosure": "Official product links are distinct from affiliate links. If a verified affiliate link is added, it will be labeled and may earn us a commission. Check current prices and terms on each provider's website.",
+    "noVerifiedLinks": "There are currently no verified affiliate links for these tools.",
+    "officialCta": "Visit official website",
+    "affiliateCta": "Visit via affiliate link",
+    "unavailableCta": "Link unavailable",
+    "officialLabel": "Direct link to the official website; not our commission link.",
+    "affiliateLabel": "Affiliate link; we may earn a commission.",
+    "unavailableLabel": "No valid, verified destination is available for this tool."
   },
   "email": {
     "title": "Get free tips & a free sample guide",
