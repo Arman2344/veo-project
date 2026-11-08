@@ -119,10 +119,40 @@ catalog so it doesn't depend on the frontend's build output.
 
 ## How to add affiliate products
 
-Edit `frontend/src/data/affiliates.json` — add an entry with `id`, `image`,
-`url` (your real affiliate link), and `name`/`description`/`benefit` per
-language. Affiliate cards automatically render with
-`rel="nofollow sponsored"` on their links.
+Edit `frontend/src/data/affiliates.json`. Entries use `id`, `image`,
+`officialUrl`, `affiliateUrl`, `affiliateVerified`, and localized `name` and
+`description` fields. Example:
+
+```json
+{
+  "id": "example-tool",
+  "image": "/images/affiliates/example.svg",
+  "officialUrl": "https://vendor.example.net/",
+  "affiliateUrl": null,
+  "affiliateVerified": false,
+  "name": { "en": "Example Tool", "de": "Beispiel-Tool", "fa": "ابزار نمونه" },
+  "description": { "en": "Description", "de": "Beschreibung", "fa": "توضیحات" }
+}
+```
+
+Use the real **official product website** for `officialUrl`; this is not a
+commission-bearing link. Keep `affiliateUrl: null` and
+`affiliateVerified: false` until the account owner confirms a genuine active
+affiliate relationship and the actual destination URL. Never guess a partner
+URL or retain a placeholder. After verification, set `affiliateUrl` and
+`affiliateVerified: true` together. The UI uses a verified, valid HTTPS
+affiliate link first and marks it as sponsored. Otherwise it falls back to a
+valid official URL, which is not marked as sponsored. If neither passes
+validation, the button is disabled and explains why. Syntax validation alone
+does **not** verify a commercial agreement or current offer.
+
+Avoid claims about personal tool usage, pricing, trials, quotas, or discounts
+without current evidence. The frontend uses Vite's `BASE_URL` for affiliate
+images so they work under the `/veo-project/` GitHub Pages path.
+
+Run `cd frontend && npm test` to check verified affiliate URLs, placeholder
+fallbacks, missing destinations, button rendering, and GitHub Pages asset
+paths. The GitHub Pages workflow runs these tests before building/deploying.
 
 ## Connecting a real payment provider (PayPal walkthrough)
 
@@ -202,8 +232,8 @@ backend + database and is out of scope for this MVP.
       real artwork/photos.
 - [ ] Add your real YouTube channel URL in `frontend/src/components/SocialLinks.jsx`
       (TikTok / Instagram / Facebook are already set to your real profiles).
-- [ ] Replace placeholder affiliate URLs in `frontend/src/data/affiliates.json`
-      with your real affiliate links.
+- [ ] Only if there is a confirmed affiliate agreement, add the real URL and
+      set `affiliateVerified: true` in `frontend/src/data/affiliates.json`.
 - [ ] Replace `SUPPORT_EMAIL` placeholder in `frontend/src/components/Footer.jsx`
       and `backend/.env.example` with your real support email.
 - [ ] Change or remove the `/admin` page's hardcoded access code in

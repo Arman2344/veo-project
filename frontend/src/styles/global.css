@@ -362,17 +362,24 @@ input:focus {
 }
 
 /* Affiliate card */
+.affiliate-card {
+  display: flex;
+  flex-direction: column;
+}
+
 .affiliate-card img {
   border-radius: var(--radius-md);
   margin-bottom: var(--space-md);
   background: var(--color-bg-alt);
 }
 
-.affiliate-benefit {
+.affiliate-actions {
+  margin-top: auto;
+}
+
+.affiliate-link-note {
   font-size: var(--fs-sm);
-  color: var(--color-success);
-  font-weight: 600;
-  margin-bottom: var(--space-sm);
+  margin: var(--space-sm) 0 0;
 }
 
 /* Admin */
